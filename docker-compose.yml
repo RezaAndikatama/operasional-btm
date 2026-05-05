@@ -1,0 +1,76 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: operasional-btm-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    networks:
+      - operasional
+
+  node:
+    image: node:20
+    container_name: operasional-btm-node
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - operasional
+
+  webserver:
+    image: nginx:alpine
+    container_name: operasional-btm-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - operasional
+
+  db:
+    image: mysql:8.0
+    container_name: operasional-btm-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: db_bengkel_btm
+      MYSQL_ROOT_PASSWORD: pw123
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: pw123
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - operasional
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: operasional-btm-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: operasional-btm-db
+      PMA_PORT: 3306
+    depends_on:
+      - db
+    networks:
+      - operasional
+
+networks:
+  operasional:
+
+volumes:
+  dbdata:
