@@ -13,6 +13,7 @@
 
     <nav class="flex-1 px-4 py-6 space-y-8 overflow-y-auto scrollbar-hide">
 
+        <!-- DASHBOARD: Bisa diakses semua role yang login -->
         <div>
             <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-sm font-medium transition-all duration-200    {{ request()->routeIs('dashboard') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
@@ -23,7 +24,8 @@
             </a>
         </div>
 
-        @hasanyrole('admin|Admin|Manajer|Teknisi')
+        <!-- OPERASIONAL: Bisa diakses Admin, Manajer, dan Karyawan/Teknisi -->
+        @hasanyrole('admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan')
         <div>
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Operasional</p>
             <ul class="space-y-1">
@@ -39,25 +41,36 @@
                     </a>
                 </li>
 
-                @hasanyrole('admin|Admin|Manajer')
+                {{-- Karyawan/Teknisi sekarang bebas melihat Inventori karena pembatasan di sini sudah dihapus --}}
                 <li>
-                    {{-- UBAH DISINI: href ke route dan tambahkan deteksi active state --}}
                     <a href="{{ route('spareparts.index') }}"
-                        class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group {{ request()->routeIs('spareparts.*') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                        class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group {{ request()->routeIs('spareparts.index') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
 
-                        <svg class="w-5 h-5 flex-shrink-0 transition-colors {{ request()->routeIs('spareparts.*') ? 'text-white' : 'group-hover:text-slate-900' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 flex-shrink-0 transition-colors {{ request()->routeIs('spareparts.index') ? 'text-white' : 'group-hover:text-slate-900' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                         </svg>
 
                         <span class="font-medium text-sm">Inventori Bahan Baku</span>
                     </a>
                 </li>
-                @endhasanyrole
+
+                <li>
+                    <a href="{{ route('spareparts.history') }}"
+                        class="{{ request()->routeIs('spareparts.history', 'spareparts.create', 'spareparts.edit') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }} flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group">
+
+                        <svg class="w-5 h-5 flex-shrink-0 transition-colors {{ request()->routeIs('spareparts.history') ? 'text-white' : 'group-hover:text-slate-900' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+
+                        <span class="font-medium text-sm">Riwayat Bahan Baku</span>
+                    </a>
+                </li>
             </ul>
         </div>
         @endhasanyrole
 
-        @hasanyrole('admin|Manajer')
+        <!-- MASTER DATA: HANYA bisa diakses oleh Admin & Manajer -->
+        @hasanyrole('admin|Admin|manajer|Manajer')
         <div>
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Master Data</p>
             <ul class="space-y-1">

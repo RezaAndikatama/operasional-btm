@@ -44,11 +44,11 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right flex justify-end gap-3">
-                                <button onclick="openEditModal({{ $tech }})" class="font-bold text-blue-500 hover:text-blue-700 transition">Edit</button>
+                                <button onclick="openEditModal({{ $tech }})" class="font-medium text-emerald-500 hover:text-emerald-700 transition">Edit</button>
                                 <form action="{{ route('technicians.destroy', $tech->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="font-bold text-red-500 hover:text-red-700 transition" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</button>
+                                    <button type="submit" class="font-medium text-red-500 hover:text-red-700 transition" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</button>
                                 </form>
                             </td>
                         </tr>

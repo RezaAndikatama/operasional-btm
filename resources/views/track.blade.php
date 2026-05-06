@@ -33,18 +33,27 @@
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen py-10 px-4">
+<body class="relative min-h-screen py-10 px-4 antialiased selection:bg-green-500 selection:text-white">
 
-    <div class="max-w-xl mx-auto space-y-4">
+    <!-- BACKGROUND SECTION (Manufaktur Vibe) -->
+    <div class="fixed inset-0 z-0 bg-slate-900">
+        <!-- Gambar Background (Ganti URL ini dengan foto bengkel Anda jika ada) -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-25"></div>
+        <!-- Gradient Overlay agar lebih elegan dan menyatu dengan konten -->
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/50 to-slate-900/90"></div>
+    </div>
 
-        <!-- Page Header -->
-        <header class="text-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-900">Lacak Pesanan Anda</h1>
-            <p class="text-sm text-gray-500 mt-1">Masukkan Nomor Work Order untuk mengecek status saat ini</p>
+    <!-- MAIN CONTENT CONTAINER -->
+    <div class="relative z-10 max-w-xl mx-auto space-y-5">
+
+        <!-- Page Header (Diubah menjadi warna putih agar kontras dengan background gelap) -->
+        <header class="text-center mb-8 mt-4">
+            <h1 class="text-3xl font-bold text-white drop-shadow-md tracking-tight">Lacak Pesanan Anda</h1>
+            <p class="text-sm text-slate-300 mt-2">Masukkan Nomor Work Order untuk mengecek status saat ini</p>
         </header>
 
         <!-- Search Form -->
-        <section aria-label="Order Search" class="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+        <section aria-label="Order Search" class="bg-white rounded-2xl shadow-lg shadow-slate-900/20 p-5 border border-gray-100">
             <h2 class="text-sm font-semibold text-gray-700 mb-1">Cari Pesanan</h2>
             <p class="text-xs text-gray-400 mb-4">Masukkan ID pesanan Anda di bawah ini.</p>
 
@@ -58,12 +67,12 @@
                         value="{{ request('wo_number') }}"
                         placeholder="Contoh: WO-2604-001"
                         required
-                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition" />
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition shadow-inner" />
                 </div>
 
                 <button
                     type="submit"
-                    class="mt-4 w-full bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200">
+                    class="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
                     </svg>
@@ -91,7 +100,7 @@
         @endphp
 
         <!-- Order Summary -->
-        <section aria-label="Order Summary" class="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+        <section aria-label="Order Summary" class="bg-white rounded-2xl shadow-lg shadow-slate-900/20 p-5 border border-gray-100">
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
@@ -107,7 +116,7 @@
         </section>
 
         <!-- Delivery Progress -->
-        <section aria-label="Delivery Progress" class="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+        <section aria-label="Delivery Progress" class="bg-white rounded-2xl shadow-lg shadow-slate-900/20 p-5 border border-gray-100">
             <h3 class="text-sm font-semibold text-gray-900">Progres Pengerjaan</h3>
             <p class="text-xs text-gray-500 mt-0.5 mb-5 font-medium">{{ $workOrder->job_name }}</p>
 
@@ -122,17 +131,17 @@
             <ol class="grid grid-cols-4 text-center" aria-label="Order steps">
                 <!-- Step 1: Diterima -->
                 <li class="flex flex-col items-center gap-1">
-                    <span class="w-9 h-9 rounded-full {{ $step1 ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center">
+                    <span class="w-9 h-9 rounded-full {{ $step1 ? 'bg-green-500 text-white shadow-sm shadow-green-500/30' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center transition-all">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                     </span>
-                    <span class="text-xs font-bold {{ $step1 ? 'text-gray-800' : 'text-gray-400' }}">Diterima</span>
+                    <span class="text-[11px] font-bold {{ $step1 ? 'text-gray-800' : 'text-gray-400' }}">Diterima</span>
                 </li>
 
                 <!-- Step 2: Menunggu -->
                 <li class="flex flex-col items-center gap-1">
-                    <span class="w-9 h-9 rounded-full {{ $step2 ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center">
+                    <span class="w-9 h-9 rounded-full {{ $step2 ? 'bg-green-500 text-white shadow-sm shadow-green-500/30' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center transition-all">
                         @if($step2) <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
@@ -140,12 +149,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg> @endif
                     </span>
-                    <span class="text-xs font-bold {{ $step2 ? 'text-gray-800' : 'text-gray-400' }}">Menunggu</span>
+                    <span class="text-[11px] font-bold {{ $step2 ? 'text-gray-800' : 'text-gray-400' }}">Menunggu</span>
                 </li>
 
                 <!-- Step 3: Proses -->
                 <li class="flex flex-col items-center gap-1">
-                    <span class="w-9 h-9 rounded-full {{ $step3 ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center">
+                    <span class="w-9 h-9 rounded-full {{ $step3 ? 'bg-green-500 text-white shadow-sm shadow-green-500/30' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center transition-all">
                         @if($step3) <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
@@ -153,12 +162,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg> @endif
                     </span>
-                    <span class="text-xs font-bold {{ $step3 ? 'text-gray-800' : 'text-gray-400' }}">Diproses</span>
+                    <span class="text-[11px] font-bold {{ $step3 ? 'text-gray-800' : 'text-gray-400' }}">Diproses</span>
                 </li>
 
                 <!-- Step 4: Selesai -->
                 <li class="flex flex-col items-center gap-1">
-                    <span class="w-9 h-9 rounded-full {{ $step4 ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center">
+                    <span class="w-9 h-9 rounded-full {{ $step4 ? 'bg-green-500 text-white shadow-sm shadow-green-500/30' : 'bg-gray-100 text-gray-400' }} flex items-center justify-center transition-all">
                         @if($step4) <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
@@ -166,13 +175,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg> @endif
                     </span>
-                    <span class="text-xs font-bold {{ $step4 ? 'text-gray-800' : 'text-gray-400' }}">Selesai</span>
+                    <span class="text-[11px] font-bold {{ $step4 ? 'text-gray-800' : 'text-gray-400' }}">Selesai</span>
                 </li>
             </ol>
         </section>
 
         <!-- Order Timeline (Vertical) -->
-        <section aria-label="Order Timeline" class="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+        <section aria-label="Order Timeline" class="bg-white rounded-2xl shadow-lg shadow-slate-900/20 p-5 border border-gray-100">
             <h3 class="text-sm font-semibold text-gray-900 mb-6">Detail Riwayat</h3>
 
             <ol class="space-y-0 relative" aria-label="Order history">
@@ -204,7 +213,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <p class="text-sm font-bold {{ $step2 ? 'text-gray-900' : 'text-gray-400' }}">Menunggu Penugasan</p>
-                            @if($status == 'Menunggu' || $status == 'Pending') <span class="bg-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Saat ini</span> @endif
+                            @if($status == 'Menunggu' || $status == 'Pending') <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/30">Saat ini</span> @endif
                         </div>
                         <p class="text-xs text-gray-500 mt-0.5">Admin sedang menjadwalkan pekerjaan ke teknisi.</p>
                     </div>
@@ -223,7 +232,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <p class="text-sm font-bold {{ $step3 ? 'text-gray-900' : 'text-gray-400' }}">Sedang Dikerjakan</p>
-                            @if($status == 'Sedang Dikerjakan') <span class="bg-orange-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Saat ini</span> @endif
+                            @if($status == 'Sedang Dikerjakan') <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/30">Saat ini</span> @endif
                         </div>
                         <p class="text-xs text-gray-500 mt-0.5">Teknisi sedang melakukan proses manufaktur dan perbaikan.</p>
                     </div>
@@ -242,7 +251,7 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <p class="text-sm font-bold {{ $step4 ? 'text-gray-900' : 'text-gray-400' }}">Selesai</p>
-                            @if($status == 'Selesai') <span class="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Selesai</span> @endif
+                            @if($status == 'Selesai') <span class="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-green-500/30">Selesai</span> @endif
                         </div>
                         <p class="text-xs {{ $step4 ? 'text-gray-500' : 'text-gray-400' }} mt-0.5">Pekerjaan telah rampung dan siap diserahterimakan.</p>
                     </div>
@@ -252,7 +261,7 @@
         </section>
         @else
         <!-- Jika WO Tidak Ditemukan -->
-        <section class="bg-red-50 rounded-2xl p-5 border border-red-100 text-center">
+        <section class="bg-red-50/95 backdrop-blur-sm rounded-2xl p-5 border border-red-200 text-center shadow-lg shadow-red-900/10">
             <h3 class="text-sm font-bold text-red-800">Pesanan Tidak Ditemukan</h3>
             <p class="text-xs text-red-600 mt-1">Pastikan Nomor Work Order yang Anda masukkan sudah benar.</p>
         </section>
