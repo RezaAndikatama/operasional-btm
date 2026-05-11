@@ -22,7 +22,7 @@ class TechnicianController extends Controller
             'name'           => 'required|string|max:255',
             'tempat_tinggal' => 'nullable|string|max:255',
             'umur'           => 'nullable|integer|min:17|max:100',
-            'status'         => 'required|in:Tersedia,Sedang Tugas,Tidak Aktif',
+            'status'         => 'required|in:Aktif,Cuti',
         ]);
 
         Technician::create([
@@ -49,7 +49,7 @@ class TechnicianController extends Controller
             'name'           => 'required|string|max:255',
             'tempat_tinggal' => 'nullable|string|max:255',
             'umur'           => 'nullable|integer|min:17|max:100',
-            'status'         => 'required|in:Tersedia,Sedang Tugas,Tidak Aktif',
+            'status'         => 'required|in:Aktif,Cuti',
         ]);
 
         $technician = Technician::findOrFail($id);

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name'); // Kolom Nama
             $table->string('specialization'); // Kolom spesialisasi
-            $table->enum('status', ['Tersedia', 'Sedang Tugas', 'Tidak Aktif'])->default('Tersedia'); // Kolom status
+            $table->enum('status', ['Aktif', 'Cuti'])->default('Aktif'); // Kolom status
             $table->timestamps();
         });
     }

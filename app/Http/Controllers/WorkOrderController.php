@@ -8,19 +8,31 @@ use Illuminate\Http\Request;
 
 class WorkOrderController extends Controller
 {
-
-    /**
-     * Menampilkan halaman daftar Work Order
-     */
-    public function index()
+    // Menampilkan daftar halaman WO    
+    public function index(Request $request)
     {
-        // 1. Mengambil data WO beserta relasi pelanggannya, diurutkan dari yang terbaru
-        $workOrders = \App\Models\WorkOrder::with('customer')->latest()->get();
+        // 1. Mulai Query dasar beserta relasi pelanggannya
+        $query = \App\Models\WorkOrder::with('customer');
 
-        // 2. Mengambil data pelanggan untuk pilihan dropdown di modal Tambah WO
+        // 2. Cek apakah ada request Filter Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 3. Cek Urutan Waktu (Sortir)
+        if ($request->sort === 'oldest') {
+            $query->orderBy('created_at', 'asc'); // Terlama / Dibuat duluan
+        } else {
+            $query->orderBy('created_at', 'desc'); // Terbaru (Default)
+        }
+
+        // 4. Eksekusi dengan Pagination (10 data per halaman) dan bawa parameter filter
+        $workOrders = $query->paginate(10)->appends($request->query());
+
+        // 5. Mengambil data pelanggan untuk pilihan dropdown di modal Tambah WO
         $customers = \App\Models\Customer::orderBy('company_name', 'asc')->get();
 
-        // 3. Mengirimkan kedua data tersebut ke file view index.blade.php
+        // 6. Mengirimkan kedua data tersebut ke file view index.blade.php
         return view('work_orders.index', compact('workOrders', 'customers'));
     }
 

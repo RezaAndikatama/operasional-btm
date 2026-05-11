@@ -18,12 +18,12 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <tr class="bg-slate-200 text-xs font-bold text-slate-700 uppercase tracking-wider">
                             <th class="py-4 px-6">Nama Perusahaan</th>
                             <th class="py-4 px-6">Contact Person (PIC)</th>
                             <th class="py-4 px-6">Kontak</th>
                             <th class="py-4 px-6">Alamat</th>
-                            <th class="py-4 px-6 text-right">Aksi</th>
+                            <th class="py-4 px-6 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="text-sm divide-y divide-slate-100 text-slate-700">
@@ -43,23 +43,40 @@
                                 </div>
                             </td>
 
-                            <td class="py-4 px-6 text-right space-x-3">
-                                <button type="button" onclick="openEditModal({{ $customer }})" class="font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
-                                    Edit
-                                </button>
+                            {{-- KOLOM AKSI (IKON SEMANTIK) --}}
+                            <td class="py-4 px-6">
+                                <div class="flex justify-center items-center gap-1.5" role="group" aria-label="Aksi Pelanggan">
 
-                                <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data perusahaan {{ $customer->company_name }}?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="font-medium text-red-600 hover:text-red-700 transition-colors">
-                                        Hapus
+                                    {{-- Tombol Edit (Icon Pensil) --}}
+                                    <button type="button" onclick="openEditModal({{ $customer }})"
+                                        class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                        aria-label="Edit Pelanggan" title="Edit Data Pelanggan">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                        <span class="sr-only">Edit</span>
                                     </button>
-                                </form>
+
+                                    {{-- Tombol Hapus (Icon Trash) --}}
+                                    <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data perusahaan {{ $customer->company_name }}?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
+                                            aria-label="Hapus Pelanggan" title="Hapus Data Pelanggan">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            <span class="sr-only">Hapus</span>
+                                        </button>
+                                    </form>
+
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="py-10 text-center text-slate-500">
+                            <td colspan="5" class="py-10 text-center text-slate-500">
                                 Belum ada data pelanggan yang terdaftar.
                             </td>
                         </tr>
@@ -70,13 +87,12 @@
         </div>
     </div>
 
-    <!-- PopUp Edit -->
     <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 sm:p-6 transition-opacity">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl overflow-hidden transform transition-all">
 
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 class="text-lg font-bold text-slate-800 font-poppins">Edit Data Pelanggan</h3>
-                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600">
+                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 focus:outline-none rounded-lg p-1 hover:bg-slate-200 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>

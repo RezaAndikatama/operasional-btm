@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sparepart;
-use App\Models\InventoryHistory; // Tambahan: Import model History
+use App\Models\InventoryHistory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Tambahan: Import DB facade untuk transaksi yang aman
+use Illuminate\Support\Facades\DB;
 
 class SparepartController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $spareparts = Sparepart::orderBy('name', 'asc')->get();
 
@@ -109,12 +109,21 @@ class SparepartController extends Controller
         return redirect()->back()->with('success', 'Stok dan riwayat transaksi berhasil dicatat!');
     }
 
-    public function history()
+    // UPDATE: Logika Filter Tanggal & Pagination (10 data)
+    public function history(Request $request)
     {
-        // Mengambil data riwayat, menyambungkan dengan nama bahan baku, urut dari yang terbaru
-        $histories = \App\Models\InventoryHistory::with('sparepart')->latest()->paginate(15);
+        $query = \App\Models\InventoryHistory::with('sparepart')->latest();
 
-        // Asumsi folder view Anda ada di resources/views/spareparts/history.blade.php
+        // Menggunakan 1 input tanggal (filter_date) agar sesuai dengan desain calendar di Header Tabel
+        if ($request->filled('filter_date')) {
+            $start = $request->filter_date . ' 00:00:00';
+            $end = $request->filter_date . ' 23:59:59';
+
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        $histories = $query->paginate(10)->appends($request->query());
+
         return view('spareparts.history', compact('histories'));
     }
 
