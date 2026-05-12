@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\UserController;
@@ -29,41 +30,8 @@ Route::get('/cek-status', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // 1. DASHBOARD (Semua role yang berhasil login bisa mengakses ini)
-    Route::get('/dashboard', function () {
-        $woActive = \App\Models\WorkOrder::whereIn('status', ['Sedang Dikerjakan', 'Pending', 'Menunggu'])->count();
-        $statusPending = \App\Models\WorkOrder::whereIn('status', ['Pending', 'Menunggu'])->count();
-        $statusInProgress = \App\Models\WorkOrder::where('status', 'Sedang Dikerjakan')->count();
-        $totalKaryawan = \App\Models\Technician::count();
-        $woSelesai = \App\Models\WorkOrder::where('status', 'Selesai')->count();
-
-        $waitingList = \App\Models\WorkOrder::with('customer')
-            ->whereIn('status', ['Pending', 'Menunggu'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $lowStockItems = \App\Models\Sparepart::where('stock', '<', 10)
-            ->orderBy('stock', 'asc')
-            ->take(4)
-            ->get();
-
-        $recentActivities = App\Models\InventoryHistory::with('sparepart')
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('dashboard', compact(
-            'woActive',
-            'statusPending',
-            'statusInProgress',
-            'totalKaryawan',
-            'woSelesai',
-            'waitingList',
-            'lowStockItems',
-            'recentActivities'
-        ));
-    })->name('dashboard');
+    // Route Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Profil User
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

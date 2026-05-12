@@ -28,7 +28,7 @@
 
         </div>
 
-        <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-lg">
+        <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>

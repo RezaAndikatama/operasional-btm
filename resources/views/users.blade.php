@@ -25,7 +25,7 @@
             </button>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg border border-slate-300 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-300 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-200 text-slate-700 uppercase font-semibold text-xs border-b border-slate-100">
