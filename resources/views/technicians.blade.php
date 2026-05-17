@@ -12,12 +12,14 @@
                 <h2 class="text-2xl font-bold text-slate-800">Data Karyawan</h2>
                 <p class="text-sm text-slate-500">Kelola daftar karyawan PT. Briliant Teknik Mandiri.</p>
             </div>
+            @unlessrole('admin|Admin')
             <button @click="isModalOpen = true" class="bg-slate-900 text-white px-5 py-2.5 rounded-lg hover:bg-slate-800 hover:shadow-lg transition flex items-center gap-2 text-sm font-medium">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Tambah Karyawan
             </button>
+            @endunlessrole
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-slate-300 overflow-hidden">
@@ -29,7 +31,9 @@
                             <th class="px-6 py-4 font-bold">TEMPAT TINGGAL</th>
                             <th class="px-6 py-4 font-bold">UMUR</th>
                             <th class="px-6 py-4 font-bold">STATUS</th>
+                            @unlessrole('admin|Admin')
                             <th class="px-6 py-4 font-bold text-center">AKSI</th>
+                            @endunlessrole
                         </tr>
                     </thead>
                     <tbody class="text-sm divide-y divide-slate-50">
@@ -39,13 +43,13 @@
                             <td class="px-6 py-4 text-slate-600">{{ $tech->tempat_tinggal ?? '-' }}</td>
                             <td class="px-6 py-4 text-slate-600">{{ $tech->umur ? $tech->umur . ' Tahun' : '-' }}</td>
                             <td class="px-6 py-4">
-                                {{-- UPDATE: Logika warna status diubah --}}
                                 <span class="px-3 py-1 {{ $tech->status == 'Aktif' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }} rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap">
                                     {{ $tech->status }}
                                 </span>
                             </td>
 
                             <!-- Kolom Aksi -->
+                            @unlessrole('admin|Admin')
                             <td class="px-6 py-4">
                                 <div class="flex justify-center items-center gap-1.5" role="group" aria-label="Aksi Karyawan">
                                     <!-- Button Edit -->
@@ -74,6 +78,7 @@
 
                                 </div>
                             </td>
+                            @endunlessrole
 
                         </tr>
                         @empty

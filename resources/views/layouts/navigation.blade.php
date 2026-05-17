@@ -3,7 +3,6 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <!-- Logo -->
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
                         <img src="{{ asset('public/images/logo-btm.png') }}"
                             alt="Logo"
@@ -17,15 +16,17 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
+                    {{-- PEMBATASAN AKSES: Disembunyikan jika yang login adalah admin --}}
+                    @if(isset(Auth::user()->role) && strtolower(Auth::user()->role) !== 'admin')
                     <x-nav-link :href="route('technicians.index')" :active="request()->routeIs('technicians.index')">
                         {{ __('Data Teknisi') }}
                     </x-nav-link>
+                    @endif
 
                     <x-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
                         {{ __('Work Order') }}
                     </x-nav-link>
 
-                    {{-- Menu Data Sparepart Desktop --}}
                     <x-nav-link :href="route('spareparts.index')" :active="request()->routeIs('spareparts.index')">
                         {{ __('Data Sparepart') }}
                     </x-nav-link>
@@ -37,7 +38,10 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+
+                            {{-- ALAT PELACAK SEMENTARA: Menampilkan Role di sebelah nama --}}
+                            <div>{{ Auth::user()->name }} (Role: {{ Auth::user()->role ?? 'KOSONG' }})</div>
+
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -82,15 +86,17 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
+            {{-- PEMBATASAN AKSES: Menu Data Teknisi Mobile --}}
+            @if(isset(Auth::user()->role) && strtolower(Auth::user()->role) !== 'admin')
             <x-responsive-nav-link :href="route('technicians.index')" :active="request()->routeIs('technicians.index')">
                 {{ __('Data Teknisi') }}
             </x-responsive-nav-link>
+            @endif
 
             <x-responsive-nav-link :href="route('work_orders.index')" :active="request()->routeIs('work_orders.*')">
                 {{ __('Work Order') }}
             </x-responsive-nav-link>
 
-            {{-- TAMBAHAN: Menu Data Sparepart Mobile --}}
             <x-responsive-nav-link :href="route('spareparts.index')" :active="request()->routeIs('spareparts.index')">
                 {{ __('Data Sparepart') }}
             </x-responsive-nav-link>

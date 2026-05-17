@@ -13,7 +13,6 @@
 
     <nav class="flex-1 px-4 py-6 space-y-8 overflow-y-auto scrollbar-hide">
 
-        <!-- DASHBOARD: Bisa diakses semua role yang login -->
         <div>
             <a href="{{ route('dashboard') }}"
                 class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-sm font-medium transition-all duration-200    {{ request()->routeIs('dashboard') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
@@ -24,7 +23,6 @@
             </a>
         </div>
 
-        <!-- OPERASIONAL: Bisa diakses Admin, Manajer, dan Karyawan/Teknisi -->
         @hasanyrole('admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan')
         <div>
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Operasional</p>
@@ -37,11 +35,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                         </svg>
 
-                        <span class="font-medium text-sm">Pencatatan Work Order</span>
+                        <span class="font-medium text-sm">Transaksi</span>
                     </a>
                 </li>
 
-                {{-- Karyawan/Teknisi sekarang bebas melihat Inventori karena pembatasan di sini sudah dihapus --}}
                 <li>
                     <a href="{{ route('spareparts.index') }}"
                         class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group {{ request()->routeIs('spareparts.index') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
@@ -50,30 +47,32 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                         </svg>
 
-                        <span class="font-medium text-sm">Inventori Bahan Baku</span>
+                        <span class="font-medium text-sm">Inventory</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="{{ route('spareparts.history') }}"
-                        class="{{ request()->routeIs('spareparts.history', 'spareparts.create', 'spareparts.edit') ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }} flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group">
+                        class="{{ request()->routeIs('spareparts.history', 'spareparts.create', 'spareparts.edit') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }} flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all group">
 
                         <svg class="w-5 h-5 flex-shrink-0 transition-colors {{ request()->routeIs('spareparts.history') ? 'text-white' : 'group-hover:text-slate-900' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
 
-                        <span class="font-medium text-sm">Riwayat Bahan Baku</span>
+                        <span class="font-medium text-sm">Riwayat</span>
                     </a>
                 </li>
             </ul>
         </div>
         @endhasanyrole
 
-        <!-- MASTER DATA: HANYA bisa diakses oleh Admin & Manajer -->
         @hasanyrole('admin|Admin|manajer|Manajer')
         <div>
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Master Data</p>
             <ul class="space-y-1">
+
+                {{-- PEMBATASAN AKSES: Kelola User & Data Karyawan HANYA bisa diakses oleh Manajer --}}
+                @hasanyrole('manajer|Manajer')
                 <li>
                     <a href="{{ route('users.index') }}"
                         class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('users.*') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
@@ -86,13 +85,15 @@
                         <span class="font-medium text-sm">Kelola User</span>
                     </a>
                 </li>
+                @endhasanyrole
+
                 <li>
                     <a href="{{ route('technicians.index') }}"
                         class="flex items-center gap-x-3 py-2 px-3 rounded-lg text-sm font-medium transition-colors {{ request()->routeIs('technicians.*') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
                         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.014a4.514 4.514 0 00-1.423-5.666 4.5 4.5 0 00-5.666-1.423 4.514 4.514 0 00.014 1.743m-2.122 5.093l-1.028-1.028M15.12 10.12l-1.028-1.028M10.875 14.25l1.03-1.03M12.75 12l1.03-1.03M14.625 9.75l1.03-1.03M16.5 7.5l1.03-1.03"></path>
                         </svg>
-                        <span class="font-medium text-sm"> Data Karyawan</span>
+                        <span class="font-medium text-sm">Data Karyawan</span>
                     </a>
                 </li>
                 <li>

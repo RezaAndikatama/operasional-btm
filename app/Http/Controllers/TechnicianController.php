@@ -7,17 +7,19 @@ use Illuminate\Http\Request;
 
 class TechnicianController extends Controller
 {
-    // 1. Menampilkan Halaman & Tabel Data
+    // 1. Menampilkan Halaman (Hanya Membaca) - DIBUKA UNTUK ADMIN
     public function index()
     {
+        // Fitur ini sekarang bisa diakses oleh Admin dan Manajer
         $technicians = Technician::latest()->get();
         return view('technicians', compact('technicians'));
     }
 
-    // 2. Menyimpan Data Baru
+    // 2. Menyimpan Data Baru - TETAP DIBLOKIR UNTUK ADMIN
     public function store(Request $request)
     {
-        // PERHATIKAN BARIS STATUS: Tidak boleh ada spasi setelah tanda koma!
+        abort_if(auth()->user()->hasAnyRole(['admin', 'Admin']), 403, 'Akses Ditolak: Admin tidak diizinkan menambah data karyawan.');
+
         $request->validate([
             'name'           => 'required|string|max:255',
             'tempat_tinggal' => 'nullable|string|max:255',
@@ -35,16 +37,20 @@ class TechnicianController extends Controller
         return redirect()->route('technicians.index')->with('success', 'Data Karyawan berhasil ditambahkan!');
     }
 
-    // 3. Menghapus Data
+    // 3. Menghapus Data - TETAP DIBLOKIR UNTUK ADMIN
     public function destroy($id)
     {
+        abort_if(auth()->user()->hasAnyRole(['admin', 'Admin']), 403, 'Akses Ditolak: Admin tidak diizinkan menghapus data karyawan.');
+
         Technician::findOrFail($id)->delete();
         return redirect()->route('technicians.index')->with('success', 'Data Karyawan berhasil dihapus!');
     }
 
-    // 4. Memperbarui Data (Edit)
+    // 4. Memperbarui Data (Edit) - TETAP DIBLOKIR UNTUK ADMIN
     public function update(Request $request, $id)
     {
+        abort_if(auth()->user()->hasAnyRole(['admin', 'Admin']), 403, 'Akses Ditolak: Admin tidak diizinkan mengubah data karyawan.');
+
         $request->validate([
             'name'           => 'required|string|max:255',
             'tempat_tinggal' => 'nullable|string|max:255',

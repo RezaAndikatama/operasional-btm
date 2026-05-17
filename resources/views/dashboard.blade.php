@@ -1,6 +1,7 @@
 <x-app-layout>
     <div class="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto font-poppins">
 
+        <!-- HEADER DASHBOARD -->
         <div class="mb-8 flex justify-between items-center">
             <div>
                 <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Dashboard Operasional</h1>
@@ -10,6 +11,7 @@
 
         <div class="grid grid-cols-12 gap-6">
 
+            <!-- KOLOM UTAMA -->
             <div class="col-span-12 xl:col-span-8 space-y-6">
 
                 <section aria-label="Ringkasan Operasional" class="flex flex-wrap -mx-2 sm:-mx-3 mb-4">
@@ -39,7 +41,7 @@
                         </article>
                     </div>
 
-                    {{-- CARD: Total Pemasukan (IMPROVED) --}}
+                    {{-- CARD: Total Pemasukan --}}
                     <div class="w-full lg:w-1/2 px-2 sm:px-3 mb-4 sm:mb-6 flex">
                         <article style="background: linear-gradient(135deg, #10b981, #059669, #0f766e);" class="w-full text-white p-6 sm:p-8 rounded-3xl shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[12rem]">
 
@@ -85,7 +87,7 @@
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        Pemasukan Bulan Ini
+                                        Pemasukan Keseluruhan Bulan Ini
                                     </div>
                                 </div>
                             </div>
@@ -182,7 +184,8 @@
                         </div>
                     </header>
 
-                    <div id="cashFlowChart" class="h-64 mt-4 w-full"></div>
+                    <!-- PERBAIKAN: Dihilangkan class "h-64" agar tidak mengunci tinggi grafik -->
+                    <div id="cashFlowChart" class="mt-4 w-full"></div>
                 </section>
 
                 {{-- DAFTAR TUNGGU WORK ORDER --}}
@@ -423,7 +426,10 @@
                 }],
                 chart: {
                     type: 'bar',
-                    height: '100%',
+                    /* PERBAIKAN: Tinggi diatur secara spesifik dengan angka pasti (bukan persentase) 
+                       dan mematikan parentHeightOffset agar tidak menabrak / overflow ke bawah */
+                    height: 320,
+                    parentHeightOffset: 0,
                     fontFamily: 'Poppins, sans-serif',
                     toolbar: {
                         show: false
@@ -478,6 +484,14 @@
                         lines: {
                             show: true
                         }
+                    },
+                    /* PERBAIKAN: Menambahkan padding agar tulisan label bulan dan garis grid 
+                       di bagian bawah maupun kiri grafik tidak terpotong */
+                    padding: {
+                        bottom: 0,
+                        top: 0,
+                        right: 0,
+                        left: 10
                     }
                 },
                 fill: {
