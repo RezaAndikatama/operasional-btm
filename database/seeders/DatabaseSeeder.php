@@ -13,14 +13,13 @@ class DatabaseSeeder extends Seeder
         // 1. Membuat Role dengan firstOrCreate agar aman dari duplikasi
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'manajer']);
-        Role::firstOrCreate(['name' => 'karyawan']);
 
         // 2. Membuat Akun Admin Pertama (Cek berdasarkan email)
         $admin = User::firstOrCreate(
-            ['email' => 'admin@btm.com'], // Kunci pencar   ian
+            ['email' => 'admin@btm.com'], // Kunci pencarian
             [
                 'name' => 'Admin Operasional',
-                'password' => bcrypt('password123'), // Hanya diisi jika user baru dibuat
+                'password' => bcrypt('password123'),
             ]
         );
 

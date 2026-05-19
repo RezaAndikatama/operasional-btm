@@ -23,7 +23,7 @@
             </a>
         </div>
 
-        @hasanyrole('admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan')
+        @hasanyrole('admin|Admin|manajer|Manajer|teknisi|Teknisi')
         <div>
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Operasional</p>
             <ul class="space-y-1">
@@ -71,7 +71,6 @@
             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-4">Master Data</p>
             <ul class="space-y-1">
 
-                {{-- PEMBATASAN AKSES: Kelola User & Data Karyawan HANYA bisa diakses oleh Manajer --}}
                 @hasanyrole('manajer|Manajer')
                 <li>
                     <a href="{{ route('users.index') }}"

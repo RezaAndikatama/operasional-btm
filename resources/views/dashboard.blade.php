@@ -50,7 +50,6 @@
                                 <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full blur-3xl" style="background: rgba(255,255,255,0.1);"></div>
                                 <div class="absolute -left-6 -bottom-10 w-40 h-40 rounded-full blur-2xl" style="background: rgba(17,94,89,0.4);"></div>
                                 <div class="absolute right-16 bottom-4 w-20 h-20 rounded-full blur-xl" style="background: rgba(110,231,183,0.2);"></div>
-                                {{-- Dot pattern --}}
                                 <svg class="absolute inset-0 w-full h-full" style="opacity: 0.05;" xmlns="http://www.w3.org/2000/svg">
                                     <defs>
                                         <pattern id="dots-income" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
