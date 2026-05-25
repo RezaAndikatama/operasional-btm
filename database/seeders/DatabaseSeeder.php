@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         Role::firstOrCreate(['name' => 'admin']);
         Role::firstOrCreate(['name' => 'manajer']);
 
-        // 2. Membuat Akun Admin Pertama (Cek berdasarkan email)
+        // 2. Membuat Akun Admin Pertama kali
         $admin = User::firstOrCreate(
             ['email' => 'admin@btm.com'], // Kunci pencarian
             [

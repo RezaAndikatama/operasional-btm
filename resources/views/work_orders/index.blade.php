@@ -21,9 +21,9 @@
                     </select>
 
                     <select name="sort" onchange="this.form.submit()"
-                        class="flex-1 sm:flex-none w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium focus:ring-emerald-500 focus:border-emerald-500 shadow-sm outline-none cursor-pointer transition-colors hover:bg-slate-50">
-                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru (Baru Dibuat)</option>
-                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama (Orderan Awal)</option>
+                        class="flex-1 sm:flex-none w-full sm:w-auto bg-white border border-slate-200 text-slate-700 pl-4 pr-10 py-2.5 rounded-lg text-sm font-medium focus:ring-emerald-500 focus:border-emerald-500 shadow-sm outline-none cursor-pointer transition-colors hover:bg-slate-50">
+                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
                     </select>
 
                     @if(request('status') || request('sort'))

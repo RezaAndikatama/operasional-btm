@@ -24,15 +24,22 @@
 
     <div class="max-w-4xl mx-auto bg-white p-10 shadow-sm border border-slate-200">
 
-        {{-- Header Invoice --}}
+        {{-- Header Invoice & Logo --}}
         <div class="flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-8">
-            <div>
+
+            {{-- Bagian Kiri: Logo dan Nama Perusahaan --}}
+            <div class="flex items-center gap-5">
+                <img src="{{ asset('images/logo-btm.png') }}" alt="Logo PT Briliant Teknik Mandiri" class="h-16 w-auto object-contain">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">PT. Briliant Teknik Mandiri</h2>
+                    <p class="text-sm text-slate-500 mt-1">Jl. Inspeksi Kali Sunter No.15<br>Kota Jakarta Pusat, Indonesia</p>
+                </div>
+            </div>
+
+            {{-- Bagian Kanan: Judul Dokumen --}}
+            <div class="text-right">
                 <h1 class="text-4xl font-extrabold text-slate-900 tracking-tighter">INVOICE</h1>
                 <p class="text-slate-500 mt-1 font-medium">#{{ $workOrder->wo_number }}</p>
-            </div>
-            <div class="text-right">
-                <h2 class="text-xl font-bold text-slate-800">PT. Briliant Teknik Mandiri</h2>
-                <p class="text-sm text-slate-500 mt-1">Jl. Operasional Bengkel No. 123<br>Kota Jakarta, Indonesia</p>
             </div>
         </div>
 

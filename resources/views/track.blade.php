@@ -7,6 +7,7 @@
     <title>Lacak Pesanan - PT. Briliant Teknik Mandiri</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-btm.png') }}?v=2">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
