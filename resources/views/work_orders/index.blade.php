@@ -261,7 +261,7 @@
 
                 <header class="flex items-start sm:items-center justify-between px-5 sm:px-8 py-5 sm:py-6 border-b border-slate-100 bg-white sticky top-0">
                     <div>
-                        <h2 id="modal-headline" class="text-lg sm:text-xl font-bold text-slate-800">Buat Work Order Baru</h2>
+                        <h2 id="modal-headline" class="text-lg sm:text-xl font-bold text-slate-800">Buat Transaksi Baru</h2>
                         <p class="text-xs text-slate-500 mt-1">Gunakan formulir ini untuk mendaftarkan pengerjaan teknis baru dari pelanggan.</p>
                     </div>
                     <button type="button" @click="isModalOpen = false" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-50 shrink-0 ml-4">
