@@ -6,6 +6,7 @@ use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\SparepartController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +25,7 @@ Route::get('/cek-status', function () {
     return view('track', compact('workOrder', 'wo_number'));
 })->name('cek-status');
 
-
-
-// AREA WAJIB LOGIN (Hanya bisa diakses jika sudah login & terverifikasi)
+//  WAJIB LOGIN (Hanya bisa diakses jika sudah login & terverifikasi)
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -38,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // 2. GRUP OPERASIONAL (Admin, Manajer, Teknisi, & Karyawan)
+    // 2.  OPERASIONAL (Admin dan Manajer)
     Route::group(['middleware' => ['role:admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan']], function () {
 
         // Work Order
@@ -48,8 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/work_orders/{id}/spareparts', [WorkOrderController::class, 'addSparepart'])->name('work_orders.add_sparepart');
         Route::delete('/work_orders/{id}/spareparts/{sparepart_id}', [WorkOrderController::class, 'removeSparepart'])->name('work_orders.remove_sparepart');
 
-        // // Barang Masuk
-        // Route::post('/spareparts/inbound', [SparepartController::class, 'inbound'])->name('spareparts.inbound');
+        // Rekap Transaksi
+        Route::get('/rekapitulasi', [RekapitulasiController::class, 'index'])->name('rekapitulasi.index');
 
         // History
         Route::get('/spareparts/history', [SparepartController::class, 'history'])->name('spareparts.history');
@@ -59,10 +58,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('spareparts', SparepartController::class);
     });
 
-    // 3. GRUP MASTER DATA (HANYA Admin dan Manajer)
+    // 3. MASTER DATA (Admin dan Manajer)
     Route::group(['middleware' => ['role:admin|Admin|manajer|Manajer']], function () {
 
-        // Master Data User (Sekarang sudah AMAN di dalam pelindung auth & role)
+        // Master Data User
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');

@@ -40,16 +40,20 @@ class LoginRequest extends FormRequest
      */
     public function authenticate(): void
     {
+        // Memastikan user tidak melakukan spam percobaan login (Rate Limiting)
         $this->ensureIsNotRateLimited();
 
+        // Mengecek kecocokan kredensial (email & password) ke dalam database
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Jika gagal, catat percobaan tersebut dan kembalikan pesan error
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
 
+        // Jika berhasil, bersihkan riwayat percobaan login yang gagal
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -81,6 +85,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

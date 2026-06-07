@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\WorkOrder;
 use App\Models\Customer;
+use App\Models\Sparepart;
 use Illuminate\Http\Request;
 
 class WorkOrderController extends Controller
 {
-    // Menampilkan daftar halaman WO    
+    // Menampilkan daftar halaman WO Aktif (Tanpa status Selesai)
     public function index(Request $request)
     {
-        // 1. Mulai Query dasar beserta relasi pelanggannya
-        $query = \App\Models\WorkOrder::with('customer');
+        // 1. Mulai Query dasar: Ambil relasi pelanggan, dan KECUALIKAN status 'Selesai'
+        $query = WorkOrder::with('customer')->where('status', '!=', 'Selesai');
 
         // 2. Cek apakah ada request Filter Status
         if ($request->filled('status')) {
@@ -21,16 +22,16 @@ class WorkOrderController extends Controller
 
         // 3. Cek Urutan Waktu (Sortir)
         if ($request->sort === 'oldest') {
-            $query->orderBy('created_at', 'asc'); // Terlama / Dibuat duluan
+            $query->orderBy('created_at', 'asc'); // Terlama 
         } else {
-            $query->orderBy('created_at', 'desc'); // Terbaru (Default)
+            $query->orderBy('created_at', 'desc'); // Terbaru 
         }
 
         // 4. Eksekusi dengan Pagination (10 data per halaman) dan bawa parameter filter
         $workOrders = $query->paginate(10)->appends($request->query());
 
         // 5. Mengambil data pelanggan untuk pilihan dropdown di modal Tambah WO
-        $customers = \App\Models\Customer::orderBy('company_name', 'asc')->get();
+        $customers = Customer::orderBy('company_name', 'asc')->get();
 
         // 6. Mengirimkan kedua data tersebut ke file view index.blade.php
         return view('work_orders.index', compact('workOrders', 'customers'));
@@ -49,14 +50,14 @@ class WorkOrderController extends Controller
         ]);
 
         // Cari pelanggan berdasarkan nama. Jika tidak ada, buatkan otomatis!
-        $customer = \App\Models\Customer::firstOrCreate(
+        $customer = Customer::firstOrCreate(
             ['company_name' => $request->customer_name],
             ['pic_name' => '-', 'phone' => '-', 'address' => '-']
         );
 
-        // GENERATE NOMOR WO OTOMATIS (Format: WO-TahunBulan-001)
-        $datePrefix = now()->format('Ym'); // Menghasilkan format tahun & bulan, contoh: 202604
-        $lastOrder = \App\Models\WorkOrder::where('wo_number', 'like', "WO-{$datePrefix}-%")->latest()->first();
+        // GENERATE NOMOR WO OTOMATIS
+        $datePrefix = now()->format('Ym');
+        $lastOrder = WorkOrder::where('wo_number', 'like', "WO-{$datePrefix}-%")->latest()->first();
 
         if ($lastOrder) {
             // Jika sudah ada pesanan di bulan ini, ambil 3 digit terakhir lalu tambah 1
@@ -69,7 +70,7 @@ class WorkOrderController extends Controller
         $woNumber = "WO-{$datePrefix}-{$nextNumber}";
 
         // Simpan Work Order lengkap dengan wo_number
-        \App\Models\WorkOrder::create([
+        WorkOrder::create([
             'wo_number'   => $woNumber,
             'customer_id' => $customer->id,
             'job_name'    => $request->job_name,
@@ -94,10 +95,10 @@ class WorkOrderController extends Controller
             'paid_amount'   => 'required|numeric|min:0',
         ]);
 
-        $workOrder = \App\Models\WorkOrder::findOrFail($id);
+        $workOrder = WorkOrder::findOrFail($id);
 
         // Cari atau buat pelanggan baru jika nama perusahaannya diganti
-        $customer = \App\Models\Customer::firstOrCreate(
+        $customer = Customer::firstOrCreate(
             ['company_name' => $request->customer_name],
             ['pic_name' => '-', 'phone' => '-', 'address' => '-']
         );
@@ -118,7 +119,7 @@ class WorkOrderController extends Controller
     // Invoice
     public function invoice($id)
     {
-        $workOrder = \App\Models\WorkOrder::with('customer')->findOrFail($id);
+        $workOrder = WorkOrder::with('customer')->findOrFail($id);
         return view('work_orders.invoice', compact('workOrder'));
     }
 
@@ -128,10 +129,10 @@ class WorkOrderController extends Controller
     public function show($id)
     {
         // Ambil data WO beserta relasi pelanggan dan sparepart yang sudah dipakai
-        $workOrder = \App\Models\WorkOrder::with(['customer', 'spareparts'])->findOrFail($id);
+        $workOrder = WorkOrder::with(['customer', 'spareparts'])->findOrFail($id);
 
         // Ambil semua daftar sparepart untuk ditampilkan di dropdown pilihan
-        $spareparts = \App\Models\Sparepart::orderBy('name', 'asc')->get();
+        $spareparts = Sparepart::orderBy('name', 'asc')->get();
 
         return view('work_orders.show', compact('workOrder', 'spareparts'));
     }
@@ -144,7 +145,7 @@ class WorkOrderController extends Controller
             'quantity_used' => 'required|integer|min:1'
         ]);
 
-        $workOrder = \App\Models\WorkOrder::findOrFail($id);
+        $workOrder = WorkOrder::findOrFail($id);
 
         // Cek apakah sparepart ini sudah pernah ditambahkan ke WO ini sebelumnya
         $existing = $workOrder->spareparts()->where('sparepart_id', $request->sparepart_id)->first();
@@ -164,7 +165,7 @@ class WorkOrderController extends Controller
     // Menghapus bahan baku
     public function removeSparepart($wo_id, $sparepart_id)
     {
-        $workOrder = \App\Models\WorkOrder::findOrFail($wo_id);
+        $workOrder = WorkOrder::findOrFail($wo_id);
 
         // Melepaskan relasi sparepart dari WO ini
         $workOrder->spareparts()->detach($sparepart_id);
@@ -175,7 +176,7 @@ class WorkOrderController extends Controller
     // Menghapus data
     public function destroy($id)
     {
-        $workOrder = \App\Models\WorkOrder::findOrFail($id);
+        $workOrder = WorkOrder::findOrFail($id);
         $workOrder->delete();
 
         return redirect()->route('work_orders.index')
