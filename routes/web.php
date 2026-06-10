@@ -22,7 +22,7 @@ Route::get('/cek-status', function () {
         $workOrder = \App\Models\WorkOrder::with('customer')->where('wo_number', $wo_number)->first();
     }
 
-    return view('track', compact('workOrder', 'wo_number'));
+    return view('public.track', compact('workOrder', 'wo_number'));
 })->name('cek-status');
 
 //  WAJIB LOGIN (Hanya bisa diakses jika sudah login & terverifikasi)

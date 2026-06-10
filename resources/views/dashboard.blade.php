@@ -1,17 +1,15 @@
 <x-app-layout>
-    <div class="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto font-poppins">
+    <div class="w-full space-y-6 font-poppins">
 
-        <!-- HEADER DASHBOARD -->
-        <div class="mb-8 flex justify-between items-center">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Dashboard Operasional</h1>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Dashboard Operasional</h1>
                 <p class="text-sm text-slate-500 mt-1">Ringkasan aktivitas pencatatan harian PT. Briliant Teknik Mandiri.</p>
             </div>
-        </div>
+        </header>
 
         <div class="grid grid-cols-12 gap-6">
 
-            <!-- KOLOM UTAMA -->
             <div class="col-span-12 xl:col-span-8 space-y-6">
 
                 <section aria-label="Ringkasan Operasional" class="flex flex-wrap -mx-2 sm:-mx-3 mb-4">
@@ -183,7 +181,6 @@
                         </div>
                     </header>
 
-                    <!-- PERBAIKAN: Dihilangkan class "h-64" agar tidak mengunci tinggi grafik -->
                     <div id="cashFlowChart" class="mt-4 w-full"></div>
                 </section>
 
@@ -425,8 +422,6 @@
                 }],
                 chart: {
                     type: 'bar',
-                    /* PERBAIKAN: Tinggi diatur secara spesifik dengan angka pasti (bukan persentase) 
-                       dan mematikan parentHeightOffset agar tidak menabrak / overflow ke bawah */
                     height: 320,
                     parentHeightOffset: 0,
                     fontFamily: 'Poppins, sans-serif',
@@ -484,8 +479,6 @@
                             show: true
                         }
                     },
-                    /* PERBAIKAN: Menambahkan padding agar tulisan label bulan dan garis grid 
-                       di bagian bawah maupun kiri grafik tidak terpotong */
                     padding: {
                         bottom: 0,
                         top: 0,

@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div x-data="{ isModalOpen: false }" class="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto font-poppins w-full min-w-0 max-w-full">
+    <main x-data="{ isModalOpen: false }" class="w-full space-y-6 font-poppins">
 
-        <div class="flex flex-col lg:flex-row lg:items-start justify-between mb-6 gap-4">
+        <header class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
 
             <div class="flex-1 min-w-0">
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight truncate">Daftar Work Order</h1>
@@ -11,7 +11,6 @@
             <div class="flex flex-wrap items-center justify-end gap-3 flex-shrink-0 w-full lg:w-auto">
 
                 <form method="GET" action="{{ url()->current() }}" class="flex flex-wrap items-center gap-3 m-0 w-full lg:w-auto">
-
                     <select name="status" onchange="this.form.submit()"
                         class="flex-1 sm:flex-none w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium focus:ring-emerald-500 focus:border-emerald-500 shadow-sm outline-none cursor-pointer transition-colors hover:bg-slate-50">
                         <option value="">Semua Status</option>
@@ -27,7 +26,7 @@
 
                     @if(request('status') || request('sort'))
                     <a href="{{ url()->current() }}" class="inline-flex items-center justify-center bg-rose-50 border border-rose-200 text-rose-600 px-3 py-2.5 rounded-lg text-sm font-bold hover:bg-rose-100 hover:text-rose-800 transition-colors shadow-sm w-full sm:w-auto" title="Reset Filter">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                         <span class="sm:hidden ml-2">Reset Filter</span>
@@ -36,25 +35,26 @@
                 </form>
 
                 <button @click="isModalOpen = true" type="button" class="w-full lg:w-auto inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
                     Buat Transaksi Baru
                 </button>
 
             </div>
-        </div>
+        </header>
 
-        <div class="bg-white rounded-xl border border-slate-300 shadow-sm w-full min-w-0 overflow-hidden relative">
+        <section aria-label="Tabel Daftar Work Order" class="bg-white rounded-xl border border-slate-300 shadow-sm w-full min-w-0 overflow-hidden relative flex flex-col">
             <div class="overflow-x-auto w-full max-w-full">
-                <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead>
-                        <tr class="bg-slate-200 text-slate-700 text-xs uppercase tracking-wider">
-                            <th class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Perusahaan</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider">Pekerjaan</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">Status</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-right">Total Biaya</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-700 uppercase tracking-wider text-center">Aksi</th>
+                <table class="w-full text-left border-collapse min-w-[900px]">
+                    <thead class="bg-slate-200 text-slate-700 text-xs uppercase tracking-wider">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700">Nama Perusahaan</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700">Pekerjaan</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700 text-center">Status</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700 text-center">Estimasi Selesai</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700 text-right">Total Biaya</th>
+                            <th scope="col" class="px-6 py-4 font-bold text-slate-700 text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-slate-100">
@@ -84,6 +84,16 @@
                                 </span>
                             </td>
 
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                @if($wo->estimasi_selesai)
+                                <div class="text-sm font-medium text-slate-700">
+                                    {{ \Carbon\Carbon::parse($wo->estimasi_selesai)->translatedFormat('d M Y') }}
+                                </div>
+                                @else
+                                <span class="text-[11px] text-slate-400 italic">Belum diset</span>
+                                @endif
+                            </td>
+
                             <td class="px-6 py-4 text-right whitespace-nowrap">
                                 <div class="text-sm font-bold text-slate-700">Rp {{ number_format($wo->total_cost, 0, ',', '.') }}</div>
                                 <div class="text-[11px] text-slate-500 mt-0.5 mb-2">Dibayar: Rp {{ number_format($wo->paid_amount, 0, ',', '.') }}</div>
@@ -109,7 +119,7 @@
                                     <a href="{{ route('work_orders.invoice', $wo->id) }}" target="_blank"
                                         class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         aria-label="Cetak Invoice" title="Cetak Invoice">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                         </svg>
                                         <span class="sr-only">Cetak Invoice</span>
@@ -119,22 +129,22 @@
                                         <button @click="isEditOpen = true" type="button"
                                             class="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                             aria-label="Edit Work Order" title="Edit Work Order">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
                                             <span class="sr-only">Edit Work Order</span>
                                         </button>
 
-                                        <div x-show="isEditOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 text-left" role="dialog">
+                                        <div x-show="isEditOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 text-left" role="dialog" aria-modal="true">
                                             <div x-show="isEditOpen" x-transition.opacity @click="isEditOpen = false" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
 
-                                            <main x-show="isEditOpen" x-transition class="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl mx-auto overflow-hidden font-poppins flex flex-col max-h-[90vh] z-50">
+                                            <div x-show="isEditOpen" x-transition class="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl mx-auto overflow-hidden font-poppins flex flex-col max-h-[90vh] z-50">
                                                 <header class="flex items-start sm:items-center justify-between px-5 sm:px-8 py-5 sm:py-6 border-b border-slate-100 bg-white sticky top-0">
                                                     <div>
                                                         <h2 class="text-lg sm:text-xl font-bold text-slate-800">Edit Work Order: {{ $wo->wo_number }}</h2>
                                                     </div>
                                                     <button type="button" @click="isEditOpen = false" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-50 shrink-0 ml-4">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                         </svg>
                                                     </button>
@@ -172,6 +182,12 @@
                                                                         <option value="Selesai" {{ $wo->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
                                                                     </select>
                                                                 </div>
+
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-slate-700 mb-2">Estimasi Selesai <span class="text-slate-400 font-normal text-xs">(Opsional)</span></label>
+                                                                    <input type="date" name="estimasi_selesai" value="{{ $wo->estimasi_selesai ? \Carbon\Carbon::parse($wo->estimasi_selesai)->format('Y-m-d') : '' }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
+                                                                </div>
+
                                                                 <div>
                                                                     <label class="block text-sm font-medium text-slate-700 mb-2">Total Biaya (Invoice) <span class="text-red-500">*</span></label>
                                                                     <div class="flex">
@@ -199,7 +215,7 @@
                                                         Update Data
                                                     </button>
                                                 </footer>
-                                            </main>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -209,7 +225,7 @@
                                         <button type="submit"
                                             class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
                                             aria-label="Hapus Work Order" title="Hapus Work Order">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
                                             <span class="sr-only">Hapus Work Order</span>
@@ -221,7 +237,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-14 text-center text-sm text-slate-500">
+                            <td colspan="6" class="px-6 py-14 text-center text-sm text-slate-500">
                                 @if(request('status') || request('sort'))
                                 Tidak ada data Work Order yang sesuai dengan filter.
                                 @else
@@ -240,7 +256,7 @@
             </div>
             @endif
 
-        </div>
+        </section>
 
         <div x-show="isModalOpen"
             style="display: none;"
@@ -253,7 +269,7 @@
                 @click="isModalOpen = false"
                 class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity"></div>
 
-            <main x-show="isModalOpen"
+            <div x-show="isModalOpen"
                 x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 class="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl mx-auto overflow-hidden font-poppins flex flex-col max-h-[90vh] z-50">
@@ -264,7 +280,7 @@
                         <p class="text-xs text-slate-500 mt-1">Gunakan formulir ini untuk mendaftarkan pengerjaan teknis baru dari pelanggan.</p>
                     </div>
                     <button type="button" @click="isModalOpen = false" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-50 shrink-0 ml-4">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
@@ -311,6 +327,11 @@
                                 </div>
 
                                 <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Estimasi Selesai <span class="text-slate-400 font-normal text-xs">(Opsional)</span></label>
+                                    <input type="date" name="estimasi_selesai" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
+                                </div>
+
+                                <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-2">Total Biaya (Invoice) <span class="text-red-500">*</span></label>
                                     <div class="flex">
                                         <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-100 text-slate-500 text-sm font-semibold">Rp</span>
@@ -340,7 +361,7 @@
                         Simpan
                     </button>
                 </footer>
-            </main>
+            </div>
         </div>
 
         <datalist id="customer_list">
@@ -349,5 +370,5 @@
             @endforeach
         </datalist>
 
-    </div>
+    </main>
 </x-app-layout>

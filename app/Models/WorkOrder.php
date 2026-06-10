@@ -17,7 +17,12 @@ class WorkOrder extends Model
         'description',
         'total_cost',
         'paid_amount',
+        'estimasi_selesai',
         'status',
+    ];
+
+    protected $casts = [
+        'estimasti_selesai' => 'date',
     ];
 
     // Hubungkan otomatis ke model Customer

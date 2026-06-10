@@ -67,7 +67,7 @@
 
                     <div class="flex flex-col">
                         <h2 class="text-3xl font-bold text-slate-800 tracking-tight flex items-baseline gap-2">
-                            {{ $transaksi->count() }} <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Work Order</span>
+                            {{ $transaksi->total() }} <span class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Work Order</span>
                         </h2>
                         <div class="w-12 h-1 bg-blue-500 rounded-full mt-5" aria-hidden="true"></div>
                     </div>
@@ -84,6 +84,7 @@
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">No. WO</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Pekerjaan</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Keterangan</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Selesai Pada</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Total Biaya</th>
                         </tr>
@@ -105,6 +106,21 @@
                                     Selesai
                                 </span>
                             </td>
+
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @if($item->paid_amount >= $item->total_cost)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                                    Lunas
+                                </span>
+                                @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500" aria-hidden="true"></span>
+                                    Belum Lunas
+                                </span>
+                                @endif
+                            </td>
+
                             <td class="px-6 py-4 text-slate-500 whitespace-nowrap">
                                 <time datetime="{{ $item->updated_at->toIso8601String() }}">
                                     {{ $item->updated_at->translatedFormat('d M Y') }} <span class="text-slate-400 text-xs ml-1">{{ $item->updated_at->format('H:i') }}</span>
@@ -118,7 +134,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
+                            <td colspan="6" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center text-slate-400">
                                     <svg class="w-8 h-8 mb-3 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -132,6 +148,13 @@
                     </tbody>
                 </table>
             </div>
+
+            @if($transaksi->hasPages())
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200">
+                {{ $transaksi->links() }}
+            </div>
+            @endif
+
         </section>
 
     </main>

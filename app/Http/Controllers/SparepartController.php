@@ -109,29 +109,28 @@ class SparepartController extends Controller
         return redirect()->back()->with('success', 'Stok dan riwayat transaksi berhasil dicatat!');
     }
 
-    // UPDATE: Logika Filter Tanggal & Pagination (10 data)
+    // PERBAIKAN: Menggunakan Solusi Advanced untuk Filter Bulan & Tahun Berjalan
     public function history(Request $request)
     {
         $query = \App\Models\InventoryHistory::with('sparepart')->latest();
 
-        // Menggunakan 1 input tanggal (filter_date) agar sesuai dengan desain calendar di Header Tabel
+        // 1. Cek apakah admin memilih tanggal spesifik dari kalender (UI)
         if ($request->filled('filter_date')) {
+            // Jika pilih tanggal 1 Juni, maka cari dari jam 00:00 sampai 23:59 di tanggal tersebut
             $start = $request->filter_date . ' 00:00:00';
             $end = $request->filter_date . ' 23:59:59';
 
             $query->whereBetween('created_at', [$start, $end]);
+        } else {
+            // 2. Jika filter dikosongkan (Default), tampilkan arus barang BULAN INI saja
+            $query->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year);
         }
 
+        // 3. Eksekusi pagination dan pertahankan parameter query URL
         $histories = $query->paginate(10)->appends($request->query());
 
+        // Kembalikan ke view (tidak perlu melempar variabel $bulan dan $tahun lagi)
         return view('spareparts.history', compact('histories'));
-    }
-
-    public function destroy($id)
-    {
-        $sparepart = Sparepart::findOrFail($id);
-        $sparepart->delete();
-
-        return redirect()->route('spareparts.index')->with('success', 'Bahan baku berhasil dihapus!');
     }
 }

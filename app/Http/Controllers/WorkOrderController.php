@@ -45,6 +45,7 @@ class WorkOrderController extends Controller
             'job_name'      => 'required|string|max:255',
             'description'   => 'nullable|string',
             'status'        => 'required|string',
+            'estimasi_selesai' => 'nullable|date',
             'total_cost'    => 'required|numeric|min:0',
             'paid_amount'   => 'required|numeric|min:0',
         ]);
@@ -76,6 +77,7 @@ class WorkOrderController extends Controller
             'job_name'    => $request->job_name,
             'description' => $request->description,
             'status'      => $request->status,
+            'estimasi_selesai' => $request->estimasi_selesai,
             'total_cost'  => $request->total_cost,
             'paid_amount' => $request->paid_amount,
         ]);
@@ -91,6 +93,7 @@ class WorkOrderController extends Controller
             'job_name'      => 'required|string|max:255',
             'description'   => 'nullable|string',
             'status'        => 'required|string',
+            'estimasi_selesai' => 'nullable|date',
             'total_cost'    => 'required|numeric|min:0',
             'paid_amount'   => 'required|numeric|min:0',
         ]);
@@ -109,6 +112,7 @@ class WorkOrderController extends Controller
             'job_name'    => $request->job_name,
             'description' => $request->description,
             'status'      => $request->status,
+            'estimasi_selesai' => $request->estimasi_selesai,
             'total_cost'  => $request->total_cost,
             'paid_amount' => $request->paid_amount,
         ]);

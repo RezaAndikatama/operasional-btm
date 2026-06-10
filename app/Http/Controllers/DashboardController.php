@@ -44,7 +44,7 @@ class DashboardController extends Controller
         // 4. DATA TUNGGU PEKERJAAN
         $waitingList = WorkOrder::with('customer')->where('status', 'Pending')->oldest()->take(5)->get();
 
-        // 5. DATA GRAFIK (DISINKRONKAN)
+        // 5. DATA GRAFIK
         $months = [];
         $pemasukanData = [];
 

@@ -18,7 +18,7 @@ class UserController extends Controller
         // Mengambil daftar roles yang tersedia untuk dropdown form
         $roles = Role::all();
 
-        return view('users', compact('users', 'roles'));
+        return view('users.users', compact('users', 'roles'));
     }
 
     // 2. Menyimpan User Baru

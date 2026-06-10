@@ -1,4 +1,4 @@
-<aside class="w-64 bg-white border-r border-slate-100 flex flex-col h-screen flex-shrink-0 z-20">
+<aside class="w-64 sticky bg-white border-r border-slate-100 flex flex-col h-screen flex-shrink-0 z-20">
 
     <header class="h-20 flex items-center px-6 border-b border-slate-50">
         <a href="{{ route('dashboard') }}" class="flex items-center gap-3 w-full group">

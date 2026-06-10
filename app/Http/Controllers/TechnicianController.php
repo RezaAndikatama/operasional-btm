@@ -12,7 +12,7 @@ class TechnicianController extends Controller
     {
         // Fitur ini sekarang bisa diakses oleh Admin dan Manajer
         $technicians = Technician::latest()->get();
-        return view('technicians', compact('technicians'));
+        return view('technicians.technicians', compact('technicians'));
     }
 
     // 2. Menyimpan Data Baru - TETAP DIBLOKIR UNTUK ADMIN
@@ -37,7 +37,7 @@ class TechnicianController extends Controller
         return redirect()->route('technicians.index')->with('success', 'Data Karyawan berhasil ditambahkan!');
     }
 
-    // 3. Menghapus Data - TETAP DIBLOKIR UNTUK ADMIN
+    // 3. Menghapus Data 
     public function destroy($id)
     {
         abort_if(auth()->user()->hasAnyRole(['admin', 'Admin']), 403, 'Akses Ditolak: Admin tidak diizinkan menghapus data karyawan.');
@@ -46,7 +46,7 @@ class TechnicianController extends Controller
         return redirect()->route('technicians.index')->with('success', 'Data Karyawan berhasil dihapus!');
     }
 
-    // 4. Memperbarui Data (Edit) - TETAP DIBLOKIR UNTUK ADMIN
+    // 4. Memperbarui Data (Edit) 
     public function update(Request $request, $id)
     {
         abort_if(auth()->user()->hasAnyRole(['admin', 'Admin']), 403, 'Akses Ditolak: Admin tidak diizinkan mengubah data karyawan.');
