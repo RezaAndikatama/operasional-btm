@@ -18,18 +18,20 @@
                                     <div class="relative group">
                                         <div class="flex items-center gap-1.5 cursor-pointer text-slate-600 group-hover:text-slate-900 transition-colors">
                                             <span class="text-xs font-bold uppercase tracking-wider">
-                                                {{ request('filter_date') ? \Carbon\Carbon::parse(request('filter_date'))->format('d M Y') : 'TANGGAL & WAKTU' }}
+                                                {{ \Carbon\Carbon::parse($filterDate)->translatedFormat('d M Y') }}
                                             </span>
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path>
                                             </svg>
                                         </div>
                                         <form action="{{ url()->current() }}" method="GET" class="absolute inset-0">
-                                            <input type="date" name="filter_date" value="{{ request('filter_date') }}" onchange="this.form.submit()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Pilih Tanggal Filter">
+                                            <input type="date" name="filter_date" value="{{ $filterDate }}" onchange="this.form.submit()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Pilih Tanggal Filter">
                                         </form>
                                     </div>
-                                    @if(request('filter_date'))
-                                    <a href="{{ url()->current() }}" class="inline-flex items-center justify-center bg-rose-100 text-rose-600 rounded-full p-0.5 hover:bg-rose-500 hover:text-white transition-colors" title="Reset">
+
+                                    {{-- Tombol reset hanya muncul jika user memfilter selain tanggal hari ini --}}
+                                    @if(request('filter_date') && request('filter_date') != now()->format('Y-m-d'))
+                                    <a href="{{ route('spareparts.history') }}" class="inline-flex items-center justify-center bg-rose-100 text-rose-600 rounded-full p-0.5 hover:bg-rose-500 hover:text-white transition-colors" title="Kembali ke Hari Ini">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
@@ -41,47 +43,62 @@
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-center">MASUK</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-center">JML TERPAKAI</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-center">DIPAKAI PADA</th>
-                            <th scope="col" class="px-6 py-4 text-xs font-bold text-center">KETERANGAN</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-bold">DIUPDATE OLEH</th>
+                            <th scope="col" class="px-6 py-4 text-xs font-bold">KETERANGAN</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-slate-700">
                         @forelse($histories as $history)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap text-slate-500 text-sm font-medium">
-                                {{ $history->created_at->format('d M Y, H:i') }}
+                                {{ $history->created_at->format('H:i') }} WIB
                             </td>
                             <td class="px-6 py-4 font-semibold text-slate-900 text-sm">
                                 {{ $history->sparepart->name ?? 'Bahan Telah Dihapus' }}
                             </td>
+
+                            {{-- LOGIKA BARU: Kolom Masuk --}}
                             <td class="px-6 py-4 text-center">
                                 @if($history->jumlah_masuk > 0)
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-50 border border-emerald-200 text-emerald-700">+{{ $history->jumlah_masuk }}</span>
                                 @else
-                                <span class="text-slate-300">-</span>
+                                <span class="text-slate-400 text-[11px] italic font-medium">Tidak ada</span>
                                 @endif
                             </td>
+
+                            {{-- LOGIKA BARU: Kolom Keluar --}}
                             <td class="px-6 py-4 text-center">
                                 @if($history->jumlah_keluar > 0)
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700">-{{ $history->jumlah_keluar }}</span>
                                 @else
-                                <span class="text-slate-300">-</span>
+                                <span class="text-slate-400 text-[11px] italic font-medium">Tidak ada</span>
                                 @endif
                             </td>
+
+                            {{-- LOGIKA BARU: Kolom Work Order --}}
                             <td class="px-6 py-4 text-center">
                                 @if($history->work_order_number)
                                 <span class="font-mono text-xs px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-md text-slate-600 font-medium">{{ $history->work_order_number }}</span>
                                 @else
-                                <span class="text-slate-400 italic text-xs">-</span>
+                                <span class="text-slate-400 text-[11px] italic font-medium">Tidak ada</span>
                                 @endif
                             </td>
+
+                            {{-- LOGIKA BARU: Kolom Update Oleh --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-xs font-semibold text-slate-800">
+                                    {{ $history->user->name ?? 'Sistem' }}
+                                </span>
+                            </td>
+
                             <td class="px-6 py-4 text-slate-600 text-xs">
                                 {{ $history->keterangan }}
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-sm text-slate-500">
-                                Belum ada riwayat pergerakan barang.
+                            <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-500">
+                                Belum ada riwayat pergerakan barang pada tanggal ini.
                             </td>
                         </tr>
                         @endforelse

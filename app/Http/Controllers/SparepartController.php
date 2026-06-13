@@ -6,6 +6,7 @@ use App\Models\Sparepart;
 use App\Models\InventoryHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class SparepartController extends Controller
 {
@@ -21,20 +22,22 @@ class SparepartController extends Controller
     {
         // Validasi input dari form
         $request->validate([
-            'name'  => 'required|string|unique:spareparts,name',
-            'stock' => 'required|integer|min:0',
-            'price' => 'nullable|numeric|min:0',
-            'unit'  => 'required|string|max:50',
+            'name'      => 'required|string|unique:spareparts,name',
+            'stock'     => 'required|integer|min:0',
+            'min_stock' => 'required|integer|min:0',
+            'price'     => 'nullable|numeric|min:0',
+            'unit'      => 'required|string|max:50',
         ], [
             // Error Message
             'name.unique' => 'Bahan baku ini sudah terdaftar! Gunakan tombol "Barang Masuk" untuk menambah stoknya.'
         ]);
 
         Sparepart::create([
-            'name'     => $request->name,
-            'stock'    => $request->stock,
-            'price'    => $request->price,
-            'unit'     => $request->unit,
+            'name'      => $request->name,
+            'stock'     => $request->stock,
+            'min_stock' => $request->min_stock,
+            'price'     => $request->price,
+            'unit'      => $request->unit,
         ]);
 
         return redirect()->route('spareparts.index')->with('success', 'Bahan baku berhasil ditambahkan!');
@@ -43,10 +46,11 @@ class SparepartController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'stock' => 'required|integer|min:0',
-            'price' => 'nullable|numeric|min:0',
-            'unit'  => 'required|string|max:50',
+            'name'      => 'required|string|max:255',
+            'stock'     => 'required|integer|min:0',
+            'min_stock' => 'required|integer|min:0',
+            'price'     => 'nullable|numeric|min:0',
+            'unit'      => 'required|string|max:50',
         ]);
 
         $sparepart = Sparepart::findOrFail($id);
@@ -86,7 +90,7 @@ class SparepartController extends Controller
             return redirect()->back()->with('error', 'Gagal! Stok tidak mencukupi. Sisa stok saat ini hanya: ' . $sparepart->stock . ' ' . $sparepart->unit);
         }
 
-        //  Proses Simpan dengan DB Transaction agar sinkron
+        // Proses Simpan dengan DB Transaction agar sinkron
         DB::transaction(function () use ($sparepart, $masuk, $keluar, $request) {
 
             // A. Update stok di master data (tabel spareparts)
@@ -97,6 +101,7 @@ class SparepartController extends Controller
             // B. Catat pergerakannya ke tabel riwayat (inventory_histories)
             InventoryHistory::create([
                 'sparepart_id'      => $sparepart->id,
+                'user_id'           => Auth::id(),
                 'jumlah_masuk'      => $masuk,
                 'jumlah_keluar'     => $keluar,
                 'work_order_number' => $request->wo,
@@ -109,28 +114,28 @@ class SparepartController extends Controller
         return redirect()->back()->with('success', 'Stok dan riwayat transaksi berhasil dicatat!');
     }
 
-    // PERBAIKAN: Menggunakan Solusi Advanced untuk Filter Bulan & Tahun Berjalan
     public function history(Request $request)
     {
-        $query = \App\Models\InventoryHistory::with('sparepart')->latest();
+        $query = \App\Models\InventoryHistory::with(['sparepart', 'user'])->latest();
 
-        // 1. Cek apakah admin memilih tanggal spesifik dari kalender (UI)
-        if ($request->filled('filter_date')) {
-            // Jika pilih tanggal 1 Juni, maka cari dari jam 00:00 sampai 23:59 di tanggal tersebut
-            $start = $request->filter_date . ' 00:00:00';
-            $end = $request->filter_date . ' 23:59:59';
+        // 1. Tangkap filter dari user. JIKA KOSONG, otomatis gunakan tanggal HARI INI
+        $filterDate = $request->input('filter_date', now()->format('Y-m-d'));
 
-            $query->whereBetween('created_at', [$start, $end]);
-        } else {
-            // 2. Jika filter dikosongkan (Default), tampilkan arus barang BULAN INI saja
-            $query->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year);
-        }
+        // 2. Gunakan fungsi whereDate bawaan Laravel agar lebih akurat mencari data harian
+        $query->whereDate('created_at', $filterDate);
 
-        // 3. Eksekusi pagination dan pertahankan parameter query URL
-        $histories = $query->paginate(10)->appends($request->query());
+        // 3. Eksekusi pagination dan pastikan parameter tanggal tersimpan di URL
+        $histories = $query->paginate(10)->appends(['filter_date' => $filterDate]);
 
-        // Kembalikan ke view (tidak perlu melempar variabel $bulan dan $tahun lagi)
-        return view('spareparts.history', compact('histories'));
+        // 4. Lempar variabel $filterDate ke view agar kalender di UI tidak error
+        return view('spareparts.history', compact('histories', 'filterDate'));
+    }
+
+    public function destroy($id)
+    {
+        $sparepart = Sparepart::findOrFail($id);
+        $sparepart->delete();
+
+        return redirect()->route('spareparts.index')->with('success', 'Bahan baku berhasil dihapus!');
     }
 }

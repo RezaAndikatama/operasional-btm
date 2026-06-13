@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\RekapitulasiController;
 use App\Http\Controllers\SparepartController;
+use App\Models\WorkOrder;
 use Illuminate\Support\Facades\Route;
 
 // Mengarahkan root domain langsung ke halaman login
@@ -19,59 +20,74 @@ Route::get('/cek-status', function () {
     $workOrder = null;
 
     if ($wo_number) {
-        $workOrder = \App\Models\WorkOrder::with('customer')->where('wo_number', $wo_number)->first();
+        // PERBAIKAN: Menambahkan relasi 'technician' agar nama teknisi bisa ditarik
+        $workOrder = WorkOrder::with(['customer', 'technician'])
+            ->where('wo_number', $wo_number)
+            ->first();
     }
 
     return view('public.track', compact('workOrder', 'wo_number'));
 })->name('cek-status');
 
-//  WAJIB LOGIN (Hanya bisa diakses jika sudah login & terverifikasi)
 
+// WAJIB LOGIN (Hanya bisa diakses jika sudah login & terverifikasi)
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Route Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Profil User
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Profil User (Dioptimalkan dengan Controller Grouping)
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
+    });
 
-    // 2.  OPERASIONAL (Admin dan Manajer)
-    Route::group(['middleware' => ['role:admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan']], function () {
+    // 2. OPERASIONAL (Admin, Manajer, Teknisi, Karyawan)
+    Route::middleware('role:admin|Admin|manajer|Manajer|teknisi|Teknisi|karyawan|Karyawan')->group(function () {
 
-        // Work Order
-        Route::resource('work_orders', WorkOrderController::class);
-        Route::get('/work_orders/{id}/invoice', [WorkOrderController::class, 'invoice'])->name('work_orders.invoice');
-        Route::get('/work_orders/{id}/detail', [WorkOrderController::class, 'show'])->name('work_orders.show');
-        Route::post('/work_orders/{id}/spareparts', [WorkOrderController::class, 'addSparepart'])->name('work_orders.add_sparepart');
-        Route::delete('/work_orders/{id}/spareparts/{sparepart_id}', [WorkOrderController::class, 'removeSparepart'])->name('work_orders.remove_sparepart');
+        // Work Order Custom Routes
+        Route::controller(WorkOrderController::class)->group(function () {
+            Route::get('/work_orders/{id}/invoice', 'invoice')->name('work_orders.invoice');
+            Route::get('/work_orders/{id}/detail', 'show')->name('work_orders.show');
+            Route::post('/work_orders/{id}/spareparts', 'addSparepart')->name('work_orders.add_sparepart');
+            Route::delete('/work_orders/{id}/spareparts/{sparepart_id}', 'removeSparepart')->name('work_orders.remove_sparepart');
+        });
+
+        // Work Order Resource (Kecuali 'show' karena sudah di-override di atas dengan '/detail')
+        Route::resource('work_orders', WorkOrderController::class)->except(['show']);
 
         // Rekap Transaksi
         Route::get('/rekapitulasi', [RekapitulasiController::class, 'index'])->name('rekapitulasi.index');
 
-        // History
-        Route::get('/spareparts/history', [SparepartController::class, 'history'])->name('spareparts.history');
-        Route::post('/spareparts/update-stock', [SparepartController::class, 'updateStock'])->name('spareparts.update_stock');
+        // History Inventori
+        Route::controller(SparepartController::class)->group(function () {
+            Route::get('/spareparts/history', 'history')->name('spareparts.history');
+            Route::post('/spareparts/update-stock', 'updateStock')->name('spareparts.update_stock');
+        });
 
-        // Data Inventori
+        // Data Inventori Utama
         Route::resource('spareparts', SparepartController::class);
     });
 
-    // 3. MASTER DATA (Admin dan Manajer)
-    Route::group(['middleware' => ['role:admin|Admin|manajer|Manajer']], function () {
+    // 3. MASTER DATA (Hanya Admin dan Manajer)
+    Route::middleware('role:admin|Admin|manajer|Manajer')->group(function () {
 
         // Master Data User
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::controller(UserController::class)->group(function () {
+            Route::get('/users', 'index')->name('users.index');
+            Route::post('/users', 'store')->name('users.store');
+            Route::put('/users/{id}', 'update')->name('users.update');
+            Route::delete('/users/{id}', 'destroy')->name('users.destroy');
+        });
 
         // Master Data Teknisi
-        Route::get('/technicians', [TechnicianController::class, 'index'])->name('technicians.index');
-        Route::post('/technicians', [TechnicianController::class, 'store'])->name('technicians.store');
-        Route::put('/technicians/{id}', [TechnicianController::class, 'update'])->name('technicians.update');
-        Route::delete('/technicians/{id}', [TechnicianController::class, 'destroy'])->name('technicians.destroy');
+        Route::controller(TechnicianController::class)->group(function () {
+            Route::get('/technicians', 'index')->name('technicians.index');
+            Route::post('/technicians', 'store')->name('technicians.store');
+            Route::put('/technicians/{id}', 'update')->name('technicians.update');
+            Route::delete('/technicians/{id}', 'destroy')->name('technicians.destroy');
+        });
 
         // Master Data Customer
         Route::resource('customers', CustomerController::class);

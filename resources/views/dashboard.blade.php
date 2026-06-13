@@ -353,7 +353,9 @@
                                 <div class="flex-1 pt-1 pb-1">
                                     <div class="flex items-start justify-between gap-2">
                                         <p class="text-[13px] text-slate-500 leading-relaxed flex-1">
-                                            <strong class="font-medium text-slate-900">Admin</strong>
+                                            {{-- BAGIAN INI YANG DIUBAH --}}
+                                            <strong class="font-medium text-slate-900">{{ $activity->user->name ?? 'Sistem' }}</strong>
+
                                             @if($activity->jumlah_keluar > 0)
                                             menggunakan <span class="font-medium text-slate-800">{{ $activity->jumlah_keluar }} {{ $activity->sparepart->unit ?? '' }}</span>
                                             <span class="font-medium text-rose-700">{{ $activity->sparepart->name ?? 'Bahan Dihapus' }}</span>

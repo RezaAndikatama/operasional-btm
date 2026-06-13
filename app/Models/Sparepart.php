@@ -13,6 +13,7 @@ class Sparepart extends Model
     protected $fillable = [
         'name',
         'stock',
+        'min_stock',
         'price',
         'unit',
     ];

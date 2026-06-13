@@ -42,9 +42,18 @@
                                 <div class="font-semibold text-slate-800">{{ $item->name }}</div>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-3 py-1 rounded-md text-xs font-bold {{ $item->stock > 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
-                                    {{ $item->stock }} {{ $item->unit }}
-                                </span>
+                                <div class="flex flex-col items-center justify-center gap-1.5">
+                                    <span class="px-3 py-1 rounded-md text-xs font-bold {{ $item->stock > $item->min_stock ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                                        {{ $item->stock }} {{ $item->unit }}
+                                    </span>
+
+                                    {{-- Indikator Peringatan Stok Kritis --}}
+                                    @if($item->stock <= $item->min_stock)
+                                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-extrabold uppercase tracking-wider rounded border border-rose-200 animate-pulse" title="Stok menyentuh batas minimum ({{ $item->min_stock }})">
+                                            Kritis
+                                        </span>
+                                        @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4 text-right font-medium text-slate-700">
                                 Rp {{ number_format($item->price, 0, ',', '.') }}
@@ -95,12 +104,16 @@
                                                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Item</label>
                                                             <input type="text" name="name" value="{{ $item->name }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
                                                         </div>
-                                                        <div class="flex gap-4">
-                                                            <div class="w-1/2">
+                                                        <div class="flex gap-3">
+                                                            <div class="flex-1">
                                                                 <label class="block text-sm font-medium text-slate-700 mb-1">Stok</label>
                                                                 <input type="number" name="stock" value="{{ $item->stock }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
                                                             </div>
-                                                            <div class="w-1/2">
+                                                            <div class="flex-1">
+                                                                <label class="block text-sm font-medium text-slate-700 mb-1">Min. Stok <span class="text-red-500">*</span></label>
+                                                                <input type="number" name="min_stock" value="{{ $item->min_stock ?? 0 }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" title="Batas minimum stok untuk notifikasi kritis">
+                                                            </div>
+                                                            <div class="flex-1">
                                                                 <label class="block text-sm font-medium text-slate-700 mb-1">Satuan</label>
                                                                 <input type="text" name="unit" value="{{ $item->unit }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
                                                             </div>
@@ -244,12 +257,16 @@
                             <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="flex gap-4">
-                            <div class="w-1/2">
+                        <div class="flex gap-3">
+                            <div class="flex-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Stok Awal <span class="text-red-500">*</span></label>
                                 <input type="number" name="stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none">
                             </div>
-                            <div class="w-1/2">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Min. Stok <span class="text-red-500">*</span></label>
+                                <input type="number" name="min_stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none" title="Batas minimum stok untuk notifikasi kritis">
+                            </div>
+                            <div class="flex-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Satuan <span class="text-red-500">*</span></label>
                                 <input type="text" name="unit" placeholder="Pcs, Liter..." required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none">
                             </div>

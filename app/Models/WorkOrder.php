@@ -13,6 +13,7 @@ class WorkOrder extends Model
     protected $fillable = [
         'wo_number',
         'customer_id',
+        'technician_id',
         'job_name',
         'description',
         'total_cost',
@@ -24,6 +25,11 @@ class WorkOrder extends Model
     protected $casts = [
         'estimasti_selesai' => 'date',
     ];
+
+    public function technician()
+    {
+        return $this->belongsTo(\App\Models\Technician::class, 'technician_id');
+    }
 
     // Hubungkan otomatis ke model Customer
     public function customer()

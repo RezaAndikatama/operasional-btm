@@ -100,15 +100,51 @@
 
             <section aria-label="Ringkasan Pesanan" class="bg-white rounded-2xl shadow-lg shadow-slate-900/20 p-5 border border-gray-100">
             <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div>
+                <div class="w-full">
                     <div class="flex items-center gap-2 flex-wrap">
                         <h2 class="text-base font-bold text-gray-900">{{ $workOrder->wo_number }}</h2>
                         <span class="{{ $step4 ? 'bg-green-500' : ($step3 ? 'bg-orange-500' : 'bg-yellow-500') }} text-white text-[10px] uppercase tracking-wider font-bold px-2.5 py-0.5 rounded-full">
                             {{ $status }}
                         </span>
                     </div>
-                    <time datetime="{{ $workOrder->created_at->toIso8601String() }}" class="text-xs text-gray-500 mt-1 block">Dibuat pada {{ $workOrder->created_at->format('d M Y') }}</time>
-                    <p class="text-xs font-semibold text-gray-700 mt-2">Pelanggan: {{ $workOrder->customer->company_name ?? 'Umum' }}</p>
+                    <time datetime="{{ $workOrder->created_at->toIso8601String() }}" class="text-xs text-gray-500 mt-1 block mb-3 border-b border-slate-100 pb-3">Dibuat pada {{ $workOrder->created_at->format('d M Y') }}</time>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Pelanggan</p>
+                            <p class="text-xs font-semibold text-gray-800">{{ $workOrder->customer->company_name ?? 'Umum' }}</p>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Teknisi Yang Mengerjakan</p>
+                            @if($workOrder->technician)
+                            @php
+                            // LOGIKA PENYAMARAN NAMA (MASKING)
+                            // Memecah nama teknisi berdasarkan spasi
+                            $nameParts = explode(' ', trim($workOrder->technician->name));
+                            // Mengambil nama pertama
+                            $publicName = $nameParts[0];
+                            // Jika ada nama kedua, ambil hanya huruf pertamanya (inisial)
+                            if (count($nameParts) > 1) {
+                            $publicName .= ' ' . substr($nameParts[1], 0, 1) . '.';
+                            }
+                            @endphp
+                            <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100" title="Nama disamarkan untuk privasi">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                {{ $publicName }}
+                            </div>
+                            @else
+                            <div class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Menunggu Penugasan
+                            </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
             </section>
@@ -259,7 +295,7 @@
                                 <p class="text-sm font-bold {{ $step2 ? 'text-gray-900' : 'text-gray-400' }}">Menunggu Penugasan</p>
                                 @if($status == 'Menunggu' || $status == 'Pending') <span class="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-orange-500/30">Saat ini</span> @endif
                             </div>
-                            <p class="text-xs text-gray-500 mt-0.5">Admin sedang menajadwalkan pekerjaan.</p>
+                            <p class="text-xs text-gray-500 mt-0.5">Admin sedang menjadwalkan pekerjaan.</p>
                         </div>
                     </li>
 

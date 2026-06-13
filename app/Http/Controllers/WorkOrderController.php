@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WorkOrder;
 use App\Models\Customer;
 use App\Models\Sparepart;
+use App\Models\Technician; // <-- Tambahkan import Model Teknisi/Karyawan
 use Illuminate\Http\Request;
 
 class WorkOrderController extends Controller
@@ -12,8 +13,8 @@ class WorkOrderController extends Controller
     // Menampilkan daftar halaman WO Aktif (Tanpa status Selesai)
     public function index(Request $request)
     {
-        // 1. Mulai Query dasar: Ambil relasi pelanggan, dan KECUALIKAN status 'Selesai'
-        $query = WorkOrder::with('customer')->where('status', '!=', 'Selesai');
+        // 1. Mulai Query dasar: Ambil relasi pelanggan dan teknisi, KECUALIKAN status 'Selesai'
+        $query = WorkOrder::with(['customer', 'technician'])->where('status', '!=', 'Selesai');
 
         // 2. Cek apakah ada request Filter Status
         if ($request->filled('status')) {
@@ -33,21 +34,26 @@ class WorkOrderController extends Controller
         // 5. Mengambil data pelanggan untuk pilihan dropdown di modal Tambah WO
         $customers = Customer::orderBy('company_name', 'asc')->get();
 
-        // 6. Mengirimkan kedua data tersebut ke file view index.blade.php
-        return view('work_orders.index', compact('workOrders', 'customers'));
+        // 6. Mengambil data teknisi/karyawan untuk pilihan penugasan
+        // Sesuaikan 'name' dengan nama kolom di tabel technicians Anda (bisa 'nama', 'full_name', dll)
+        $technicians = Technician::orderBy('name', 'asc')->get();
+
+        // 7. Mengirimkan data ke file view index.blade.php
+        return view('work_orders.index', compact('workOrders', 'customers', 'technicians'));
     }
 
     public function store(Request $request)
     {
         // Validasi Data
         $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'job_name'      => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'status'        => 'required|string',
+            'customer_name'    => 'required|string|max:255',
+            'technician_id'    => 'nullable|exists:technicians,id', // <-- Validasi Teknisi
+            'job_name'         => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'status'           => 'required|string',
             'estimasi_selesai' => 'nullable|date',
-            'total_cost'    => 'required|numeric|min:0',
-            'paid_amount'   => 'required|numeric|min:0',
+            'total_cost'       => 'required|numeric|min:0',
+            'paid_amount'      => 'required|numeric|min:0',
         ]);
 
         // Cari pelanggan berdasarkan nama. Jika tidak ada, buatkan otomatis!
@@ -70,16 +76,17 @@ class WorkOrderController extends Controller
         }
         $woNumber = "WO-{$datePrefix}-{$nextNumber}";
 
-        // Simpan Work Order lengkap dengan wo_number
+        // Simpan Work Order lengkap dengan wo_number dan technician_id
         WorkOrder::create([
-            'wo_number'   => $woNumber,
-            'customer_id' => $customer->id,
-            'job_name'    => $request->job_name,
-            'description' => $request->description,
-            'status'      => $request->status,
+            'wo_number'        => $woNumber,
+            'customer_id'      => $customer->id,
+            'technician_id'    => $request->technician_id, // <-- Simpan ID Teknisi
+            'job_name'         => $request->job_name,
+            'description'      => $request->description,
+            'status'           => $request->status,
             'estimasi_selesai' => $request->estimasi_selesai,
-            'total_cost'  => $request->total_cost,
-            'paid_amount' => $request->paid_amount,
+            'total_cost'       => $request->total_cost,
+            'paid_amount'      => $request->paid_amount,
         ]);
 
         return redirect()->route('work_orders.index')->with('success', 'Work Order berhasil disimpan!');
@@ -89,13 +96,14 @@ class WorkOrderController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'job_name'      => 'required|string|max:255',
-            'description'   => 'nullable|string',
-            'status'        => 'required|string',
+            'customer_name'    => 'required|string|max:255',
+            'technician_id'    => 'nullable|exists:technicians,id', // <-- Validasi Teknisi
+            'job_name'         => 'required|string|max:255',
+            'description'      => 'nullable|string',
+            'status'           => 'required|string',
             'estimasi_selesai' => 'nullable|date',
-            'total_cost'    => 'required|numeric|min:0',
-            'paid_amount'   => 'required|numeric|min:0',
+            'total_cost'       => 'required|numeric|min:0',
+            'paid_amount'      => 'required|numeric|min:0',
         ]);
 
         $workOrder = WorkOrder::findOrFail($id);
@@ -108,13 +116,14 @@ class WorkOrderController extends Controller
 
         // Update data
         $workOrder->update([
-            'customer_id' => $customer->id,
-            'job_name'    => $request->job_name,
-            'description' => $request->description,
-            'status'      => $request->status,
+            'customer_id'      => $customer->id,
+            'technician_id'    => $request->technician_id, // <-- Update ID Teknisi
+            'job_name'         => $request->job_name,
+            'description'      => $request->description,
+            'status'           => $request->status,
             'estimasi_selesai' => $request->estimasi_selesai,
-            'total_cost'  => $request->total_cost,
-            'paid_amount' => $request->paid_amount,
+            'total_cost'       => $request->total_cost,
+            'paid_amount'      => $request->paid_amount,
         ]);
 
         return redirect()->route('work_orders.index')->with('success', 'Data Work Order berhasil diperbarui!');
@@ -133,7 +142,7 @@ class WorkOrderController extends Controller
     public function show($id)
     {
         // Ambil data WO beserta relasi pelanggan dan sparepart yang sudah dipakai
-        $workOrder = WorkOrder::with(['customer', 'spareparts'])->findOrFail($id);
+        $workOrder = WorkOrder::with(['customer', 'spareparts', 'technician'])->findOrFail($id);
 
         // Ambil semua daftar sparepart untuk ditampilkan di dropdown pilihan
         $spareparts = Sparepart::orderBy('name', 'asc')->get();
