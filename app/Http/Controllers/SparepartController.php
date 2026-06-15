@@ -14,7 +14,11 @@ class SparepartController extends Controller
     {
         $spareparts = Sparepart::orderBy('name', 'asc')->get();
 
-        $workOrders = \App\Models\WorkOrder::latest()->get();
+        // Mengambil Data WO yang belum selesai
+        $workOrders = \App\Models\WorkOrder::where('status', '!=', 'Selesai')
+            ->latest()
+            ->get();
+
         return view('spareparts.index', compact('spareparts', 'workOrders'));
     }
 
@@ -114,21 +118,26 @@ class SparepartController extends Controller
         return redirect()->back()->with('success', 'Stok dan riwayat transaksi berhasil dicatat!');
     }
 
+
     public function history(Request $request)
     {
-        $query = \App\Models\InventoryHistory::with(['sparepart', 'user'])->latest();
+        // Mulai kueri dengan memuat relasi (Eager Loading)
+        $query = InventoryHistory::with(['sparepart', 'user'])->latest();
 
-        // 1. Tangkap filter dari user. JIKA KOSONG, otomatis gunakan tanggal HARI INI
-        $filterDate = $request->input('filter_date', now()->format('Y-m-d'));
+        // Logika Filter Berdasarkan Bulan (Bukan lagi per hari)
+        if ($request->filled('month')) {
+            // Memecah input 'YYYY-MM' menjadi array [0 => tahun, 1 => bulan]
+            $monthYear = explode('-', $request->month);
 
-        // 2. Gunakan fungsi whereDate bawaan Laravel agar lebih akurat mencari data harian
-        $query->whereDate('created_at', $filterDate);
+            if (count($monthYear) == 2) {
+                $query->whereYear('created_at', $monthYear[0])
+                    ->whereMonth('created_at', $monthYear[1]);
+            }
+        }
 
-        // 3. Eksekusi pagination dan pastikan parameter tanggal tersimpan di URL
-        $histories = $query->paginate(10)->appends(['filter_date' => $filterDate]);
+        $histories = $query->paginate(10)->withQueryString();
 
-        // 4. Lempar variabel $filterDate ke view agar kalender di UI tidak error
-        return view('spareparts.history', compact('histories', 'filterDate'));
+        return view('spareparts.history', compact('histories'));
     }
 
     public function destroy($id)

@@ -39,7 +39,7 @@
                             <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
+                    <tbody class="divide-y divide-slate-50 text-sm">
                         @forelse($users as $user)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 font-medium text-slate-800">{{ $user->name }}</td>

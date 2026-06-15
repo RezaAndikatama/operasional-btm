@@ -35,7 +35,7 @@
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-600 uppercase tracking-wider text-center bg-slate-200">AKSI</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-slate-100">
+                    <tbody class="bg-white divide-y divide-slate-100 text-sm">
                         @forelse($spareparts as $item)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4">
@@ -102,25 +102,25 @@
                                                         @csrf @method('PUT')
                                                         <div>
                                                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Item</label>
-                                                            <input type="text" name="name" value="{{ $item->name }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                                            <input type="text" name="name" value="{{ $item->name }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                                                         </div>
                                                         <div class="flex gap-3">
                                                             <div class="flex-1">
                                                                 <label class="block text-sm font-medium text-slate-700 mb-1">Stok</label>
-                                                                <input type="number" name="stock" value="{{ $item->stock }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                                                <input type="number" name="stock" value="{{ $item->stock }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                                                             </div>
                                                             <div class="flex-1">
                                                                 <label class="block text-sm font-medium text-slate-700 mb-1">Min. Stok <span class="text-red-500">*</span></label>
-                                                                <input type="number" name="min_stock" value="{{ $item->min_stock ?? 0 }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" title="Batas minimum stok untuk notifikasi kritis">
+                                                                <input type="number" name="min_stock" value="{{ $item->min_stock ?? 0 }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all" title="Batas minimum stok untuk notifikasi kritis">
                                                             </div>
                                                             <div class="flex-1">
                                                                 <label class="block text-sm font-medium text-slate-700 mb-1">Satuan</label>
-                                                                <input type="text" name="unit" value="{{ $item->unit }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                                                <input type="text" name="unit" value="{{ $item->unit }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                                                             </div>
                                                         </div>
                                                         <div>
                                                             <label class="block text-sm font-medium text-slate-700 mb-1">Harga Satuan (Rp)</label>
-                                                            <input type="number" name="price" value="{{ $item->price }}" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                                            <input type="number" name="price" value="{{ $item->price }}" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                                                         </div>
                                                         <div class="mt-8 flex justify-end gap-3 border-t border-slate-100 pt-5">
                                                             <button type="button" @click="isEditOpen = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">Batal</button>
@@ -157,6 +157,7 @@
             </div>
         </section>
 
+        {{-- MODAL UPDATE STOK / PEMAKAIAN BAHAN --}}
         <div x-show="isModalInboundOpen"
             style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8"
@@ -187,7 +188,7 @@
                         @csrf
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Bahan Baku <span class="text-red-500">*</span></label>
-                            <input list="inbound_list" type="text" name="name" autocomplete="off" placeholder="Ketik nama bahan baku..." required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                            <input list="inbound_list" type="text" name="name" autocomplete="off" placeholder="Ketik nama bahan baku..." required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                             <datalist id="inbound_list">
                                 @foreach($spareparts as $item)
                                 <option value="{{ $item->name }}"></option>
@@ -197,21 +198,23 @@
                         <div class="flex gap-4">
                             <div class="w-1/2">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Jumlah Masuk</label>
-                                <input type="number" name="masuk" min="0" placeholder="Contoh: 50" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                                <input type="number" name="masuk" min="0" placeholder="Contoh: 50" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                             </div>
                             <div class="w-1/2">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Jumlah Terpakai</label>
-                                <input type="number" name="keluar" min="0" placeholder="Contoh: 10" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-rose-500 focus:border-rose-500 outline-none transition-colors">
+                                <input type="number" name="keluar" min="0" placeholder="Contoh: 10" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none transition-all">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Digunakan untuk (No. Work Order)</label>
-                            <select name="wo" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white appearance-none cursor-pointer">
-                                <option value="">Pilih WO</option>
+                            <input type="text" name="wo" list="wo_list" autocomplete="off" placeholder="Pilih WO aktif atau ketik manual..." class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                            <datalist id="wo_list">
                                 @foreach($workOrders as $wo)
-                                <option value="{{ $wo->wo_number }}">{{ $wo->wo_number }}</option>
+                                <option value="{{ $wo->wo_number }}">
+                                    {{ $wo->customer ? $wo->customer->company_name : 'Pelanggan Umum' }}
+                                </option>
                                 @endforeach
-                            </select>
+                            </datalist>
                         </div>
                         <div class="mt-8 flex justify-end gap-3 border-t border-slate-100 pt-5">
                             <button type="button" @click="isModalInboundOpen = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">Batal</button>
@@ -222,6 +225,7 @@
             </div>
         </div>
 
+        {{-- MODAL TAMBAH BAHAN BAKU BARU --}}
         <div x-show="isModalOpen"
             style="display: none;"
             class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8"
@@ -252,7 +256,13 @@
                         @csrf
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Item <span class="text-red-500">*</span></label>
-                            <input list="sparepart_list" type="text" name="name" autocomplete="off" placeholder="Ketik baru atau pilih yang ada..." value="{{ old('name') }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+                            <input list="sparepart_list_new" type="text" name="name" autocomplete="off" placeholder="Ketik baru atau pilih yang ada..." value="{{ old('name') }}" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                            {{-- PENAMBAHAN DATALIST YANG SEBELUMNYA HILANG --}}
+                            <datalist id="sparepart_list_new">
+                                @foreach($spareparts as $item)
+                                <option value="{{ $item->name }}"></option>
+                                @endforeach
+                            </datalist>
                             @error('name')
                             <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p>
                             @enderror
@@ -260,20 +270,20 @@
                         <div class="flex gap-3">
                             <div class="flex-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Stok Awal <span class="text-red-500">*</span></label>
-                                <input type="number" name="stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none">
+                                <input type="number" name="stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                             </div>
                             <div class="flex-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Min. Stok <span class="text-red-500">*</span></label>
-                                <input type="number" name="min_stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none" title="Batas minimum stok untuk notifikasi kritis">
+                                <input type="number" name="min_stock" value="0" required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all" title="Batas minimum stok untuk notifikasi kritis">
                             </div>
                             <div class="flex-1">
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Satuan <span class="text-red-500">*</span></label>
-                                <input type="text" name="unit" placeholder="Pcs, Liter..." required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none">
+                                <input type="text" name="unit" placeholder="Pcs, Liter..." required class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                             </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Harga Satuan (Rp)</label>
-                            <input type="number" name="price" value="0" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-emerald-500 outline-none">
+                            <input type="number" name="price" value="0" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
                         </div>
                         <div class="mt-8 flex justify-end gap-3 border-t border-slate-100 pt-5">
                             <button type="button" @click="isModalOpen = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-xl transition-colors">Batal</button>
