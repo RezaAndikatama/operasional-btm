@@ -1,21 +1,42 @@
 <x-app-layout>
     <main class="space-y-6">
 
-        <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Rekapitulasi Transaksi</h1>
-                <p class="text-sm text-slate-500 mt-1">Data riwayat pengerjaan bengkel yang telah selesai dikerjakan.</p>
+        {{-- Header Halaman --}}
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+            {{-- Bagian Kiri: Judul Halaman --}}
+            <div class="flex-1 min-w-0">
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight truncate">Rekapitulasi Transaksi</h1>
+                <p class="text-sm text-slate-500 mt-1 truncate">Data riwayat pengerjaan bengkel yang telah selesai dikerjakan.</p>
             </div>
 
-            <form method="GET" action="{{ route('rekapitulasi.index') }}" class="w-full sm:w-auto flex items-center gap-3">
-                <label for="bulan" class="text-sm font-semibold text-slate-600 hidden sm:block">Pilih Bulan:</label>
-                <input type="month" id="bulan" name="bulan" value="{{ $filterBulan }}" onchange="this.form.submit()"
-                    class="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm outline-none cursor-pointer transition-all hover:border-emerald-400">
-            </form>
+            {{-- Bagian Kanan: Filter & Tombol Aksi --}}
+            {{-- Menggunakan grid-cols-2 khusus di mobile phone agar 1 baris bersampingan, lalu kembali ke sm:flex untuk laptop --}}
+            <div class="w-full sm:w-auto grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center md:justify-end gap-2 sm:gap-3">
+
+                {{-- 1. Tombol Ekspor Excel --}}
+                <a href="{{ route('rekapitulasi.excel', ['bulan' => request('bulan', $filterBulan)]) }}"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] sm:text-sm font-semibold rounded-xl shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 whitespace-nowrap">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span>Ekspor Excel</span>
+                </a>
+
+                {{-- 2. Form Filter Bulan --}}
+                <form method="GET" action="{{ route('rekapitulasi.index') }}" class="w-full sm:w-auto flex items-center m-0">
+                    <label for="bulan" class="text-sm font-semibold text-slate-600 hidden md:block whitespace-nowrap mr-3">Pilih Bulan:</label>
+                    <input type="month" id="bulan" name="bulan" value="{{ $filterBulan }}" onchange="this.form.submit()"
+                        class="w-full sm:w-44 bg-white border border-slate-200 text-slate-700 px-3 sm:px-4 py-2.5 rounded-xl text-[13px] sm:text-sm font-bold focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 shadow-sm outline-none cursor-pointer transition-all hover:border-emerald-400">
+                </form>
+
+            </div>
         </header>
 
+        {{-- Section Ringkasan Metrik --}}
         <section aria-label="Ringkasan Metrik" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+            {{-- Card Pendapatan --}}
             <article class="relative bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 w-full overflow-hidden group">
                 <div class="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-emerald-100 rounded-full opacity-50 blur-2xl group-hover:bg-emerald-200 transition-colors duration-500" aria-hidden="true"></div>
 
@@ -45,6 +66,7 @@
                 </div>
             </article>
 
+            {{-- Card Total Order Selesai --}}
             <article class="relative bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 w-full overflow-hidden group">
                 <div class="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-2xl group-hover:bg-blue-200 transition-colors duration-500" aria-hidden="true"></div>
 
@@ -76,11 +98,12 @@
 
         </section>
 
+        {{-- Section Tabel Data Riwayat Transaksi --}}
         <section aria-label="Tabel Data Riwayat Transaksi" class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-200 border-b border-slate-200">
+                        <tr class="bg-slate-50 border-b border-slate-200">
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">No. WO</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Pekerjaan</th>
                             <th scope="col" class="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
@@ -91,7 +114,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
                         @forelse($transaksi as $item)
-                        <tr class="hover:bg-slate-50 transition-colors group">
+                        <tr class="hover:bg-slate-50/80 transition-colors group">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-md border border-emerald-100">
                                     {{ $item->wo_number }}
@@ -149,6 +172,7 @@
                 </table>
             </div>
 
+            {{-- Fitur Pagination Laporan --}}
             @if($transaksi->hasPages())
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-200">
                 {{ $transaksi->links() }}

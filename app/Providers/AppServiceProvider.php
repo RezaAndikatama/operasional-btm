@@ -3,20 +3,33 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL; // <-- Tambahkan ini
+use Illuminate\Support\Facades\View;
+use App\Models\Sparepart;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register()
+    /**
+     * Register any application services.
+     */
+    public function register(): void
     {
         //
     }
 
-    public function boot()
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
     {
-        // Jika aplikasi diakses selain dari localhost langsung, paksa gunakan HTTPS
-        if (env('APP_ENV') !== 'local' || request()->header('x-forwarded-proto') == 'https') {
-            URL::forceScheme('https');
-        }
+        // Bagikan data stok kritis ke seluruh view jika user sudah login
+        View::composer('*', function ($view) {
+            if (Auth::check()) {
+                // Mengambil sparepart yang stoknya menyentuh atau di bawah min_stock
+                $criticalStocks = Sparepart::whereRaw('stock <= min_stock')->get();
+
+                $view->with('criticalStocks', $criticalStocks);
+            }
+        });
     }
 }

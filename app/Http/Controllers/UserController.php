@@ -16,7 +16,8 @@ class UserController extends Controller
         // Mengambil data beserta roles
         $users = User::with('roles')->latest()->get();
         // Mengambil daftar roles yang tersedia untuk dropdown form
-        $roles = Role::all();
+        // $roles = Role::all();
+        $roles = Role::where('name', '!=', 'Manajer')->get();
 
         return view('users.users', compact('users', 'roles'));
     }

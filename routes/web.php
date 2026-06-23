@@ -59,6 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Rekap Transaksi
         Route::get('/rekapitulasi', [RekapitulasiController::class, 'index'])->name('rekapitulasi.index');
+        Route::get('/rekapitulasi/export-excel', [RekapitulasiController::class, 'exportExcel'])->name('rekapitulasi.excel');
 
         // History Inventori
         Route::controller(SparepartController::class)->group(function () {

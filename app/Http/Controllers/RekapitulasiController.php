@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\WorkOrder;
 use Carbon\Carbon;
+use App\Exports\TransaksiExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RekapitulasiController extends Controller
 {
@@ -35,5 +37,20 @@ class RekapitulasiController extends Controller
             'filterBulan',
             'namaBulan'
         ));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        // Mengambil nilai string e.g., "2026-06"
+        $periode = $request->get('bulan', date('Y-m'));
+
+        // Memisahkan string berdasarkan tanda hubung '-'
+        $parts = explode('-', $periode);
+        $tahun = $parts[0];
+        $bulan = $parts[1];
+
+        $namaFile = 'Laporan_Pemasukan_BTM_' . $bulan . '_' . $tahun . '.xlsx';
+
+        return Excel::download(new TransaksiExport($bulan, $tahun), $namaFile);
     }
 }
