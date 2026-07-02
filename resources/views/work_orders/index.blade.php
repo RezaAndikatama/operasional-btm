@@ -222,10 +222,10 @@
                                                                     </div>
                                                                 </div>
                                                                 <div>
-                                                                    <label class="block text-sm font-medium text-slate-700 mb-2">Sudah Dibayar / DP <span class="text-red-500">*</span></label>
+                                                                    <label class="block text-sm font-medium text-slate-700 mb-2">Sudah Dibayar / DP <span class="text-slate-400 font-normal text-xs">(Opsional)</span></label>
                                                                     <div class="flex">
                                                                         <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-100 text-slate-500 text-sm font-semibold">Rp</span>
-                                                                        <input type="number" name="paid_amount" value="{{ (int)$wo->paid_amount }}" required class="flex-1 w-full px-4 py-3 rounded-r-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
+                                                                        <input type="number" name="paid_amount" value="{{ (int)$wo->paid_amount }}" class="flex-1 w-full px-4 py-3 rounded-r-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
                                                                     </div>
                                                                 </div>
                                                             </fieldset>
@@ -378,10 +378,10 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-2">Sudah Dibayar / DP <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Sudah Dibayar / DP <span class="text-slate-400 font-normal text-xs">(Opsional)</span></label>
                                     <div class="flex">
                                         <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-slate-200 bg-slate-100 text-slate-500 text-sm font-semibold">Rp</span>
-                                        <input type="number" name="paid_amount" placeholder="0" required
+                                        <input type="number" name="paid_amount" placeholder="0"
                                             class="flex-1 w-full px-4 py-3 rounded-r-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
                                     </div>
                                 </div>

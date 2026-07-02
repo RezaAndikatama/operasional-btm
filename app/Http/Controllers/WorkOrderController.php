@@ -53,7 +53,7 @@ class WorkOrderController extends Controller
             'status'           => 'required|string',
             'estimasi_selesai' => 'nullable|date',
             'total_cost'       => 'required|numeric|min:0',
-            'paid_amount'      => 'required|numeric|min:0',
+            'paid_amount'      => 'nullable|numeric|min:0',
         ]);
 
         // Cari pelanggan berdasarkan nama. Jika tidak ada, buatkan otomatis!
@@ -86,7 +86,7 @@ class WorkOrderController extends Controller
             'status'           => $request->status,
             'estimasi_selesai' => $request->estimasi_selesai,
             'total_cost'       => $request->total_cost,
-            'paid_amount'      => $request->paid_amount,
+            'paid_amount'      => $request->paid_amount ?? 0,
         ]);
 
         return redirect()->route('work_orders.index')->with('success', 'Work Order berhasil disimpan!');
@@ -103,7 +103,7 @@ class WorkOrderController extends Controller
             'status'           => 'required|string',
             'estimasi_selesai' => 'nullable|date',
             'total_cost'       => 'required|numeric|min:0',
-            'paid_amount'      => 'required|numeric|min:0',
+            'paid_amount'      => 'nullable|numeric|min:0',
         ]);
 
         $workOrder = WorkOrder::findOrFail($id);
@@ -123,7 +123,7 @@ class WorkOrderController extends Controller
             'status'           => $request->status,
             'estimasi_selesai' => $request->estimasi_selesai,
             'total_cost'       => $request->total_cost,
-            'paid_amount'      => $request->paid_amount,
+            'paid_amount'      => $request->paid_amount ?? 0,
         ]);
 
         return redirect()->route('work_orders.index')->with('success', 'Data Work Order berhasil diperbarui!');
