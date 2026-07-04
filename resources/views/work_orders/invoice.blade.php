@@ -99,12 +99,13 @@
         <div class="flex justify-between items-end mt-16 pt-8 border-t border-slate-200">
             <div class="text-sm text-slate-500">
                 <p class="font-bold text-slate-800 mb-1">Catatan Pembayaran:</p>
-                <p>Mohon lakukan transfer ke Rekening BCA: 1234567890<br>a.n PT Briliant Teknik Mandiri.</p>
+                <p>Mohon lakukan transfer ke Rekening BCA: 8770875677<br>a.n Briliant Teknik Mandiri.</p>
+                <p>Mohon lakukan transfer ke Rekening BCA: 5885116938<br>a.n Sutrisno.</p>
             </div>
             <div class="text-center w-48">
                 <p class="text-sm font-bold text-slate-800 mb-16">Hormat Kami,</p>
                 <div class="border-b border-slate-800"></div>
-                <p class="text-xs text-slate-500 mt-2">Admin Operasional</p>
+                <p class="text-xs text-slate-500 mt-2">PT. Briliant Teknik Mandiri</p>
             </div>
         </div>
 
