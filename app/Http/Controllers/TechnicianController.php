@@ -10,7 +10,6 @@ class TechnicianController extends Controller
     // 1. Menampilkan Halaman (Hanya Membaca) - DIBUKA UNTUK ADMIN
     public function index()
     {
-        // Fitur ini sekarang bisa diakses oleh Admin dan Manajer
         $technicians = Technician::latest()->get();
         return view('technicians.technicians', compact('technicians'));
     }

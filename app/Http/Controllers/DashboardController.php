@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $statusInProgress = WorkOrder::where('status', 'Sedang Dikerjakan')->count();
         $totalKaryawan = Technician::count();
 
-        $lowStockItems = Sparepart::where('stock', '<=', 5)->get();
+        $lowStockItems = Sparepart::whereColumn('stock', '<=', 'min_stock')->get();
 
         $recentActivities = InventoryHistory::with(['sparepart', 'user'])
             ->latest()
