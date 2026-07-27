@@ -1,17 +1,31 @@
 <x-app-layout>
     <div class="w-full space-y-6 font-poppins"
-        x-data="{ isModalOpen: {{ $errors->any() ? 'true' : 'false' }}, isEditOpen: false }"
+        x-data="{ 
+            isModalOpen: {{ old('_method') !== 'PUT' && $errors->any() ? 'true' : 'false' }}, 
+            isEditOpen: {{ old('_method') === 'PUT' && $errors->any() ? 'true' : 'false' }} 
+        }"
         @open-edit-modal.window="isEditOpen = true"
         @close-edit-modal.window="isEditOpen = false">
 
+        {{-- Session Success & Error Alerts --}}
         @if(session('success'))
         <div role="alert" class="p-4 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-200 text-sm font-medium">
             {{ session('success') }}
         </div>
         @endif
         @if(session('error'))
-        <div role="alert" class="p-4 bg-red-50 text-red-600 rounded-lg border border-red-200 text-sm font-medium">
+        <div role="alert" class="p-4 bg-rose-50 text-rose-600 rounded-lg border border-rose-200 text-sm font-medium">
             {{ session('error') }}
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div role="alert" class="p-4 bg-rose-50 text-rose-600 rounded-lg border border-rose-200 text-sm font-medium">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
         @endif
 
@@ -53,7 +67,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-center gap-3">
-                                    <button type="button" onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg transition-colors">
+                                    <button type="button" onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ $user->roles->first()->name ?? '' }}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
@@ -79,20 +93,30 @@
             </div>
         </section>
 
+        {{-- MODAL TAMBAH USER --}}
         <template x-teleport="body">
             <div x-show="isModalOpen" style="display: none; z-index: 999999;" class="fixed inset-0 flex items-center justify-center p-4 font-poppins" role="dialog">
-
                 <div x-show="isModalOpen" @click="isModalOpen = false" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
-
                 <div x-show="isModalOpen" x-transition class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
                     <h3 class="text-xl font-bold mb-6 text-slate-800">Tambah Akun Baru</h3>
                     <form action="{{ route('users.store') }}" method="POST" class="space-y-4">
                         @csrf
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label><input name="name" type="text" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Email Login</label><input name="email" type="email" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required></div>
-                        <div><label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label><select name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
-                                @foreach($roles as $role)<option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>@endforeach
-                            </select></div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+                            <input name="name" type="text" value="{{ old('_method') !== 'PUT' ? old('name') : '' }}" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Login</label>
+                            <input name="email" type="email" value="{{ old('_method') !== 'PUT' ? old('email') : '' }}" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
+                            <select name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                                @foreach($roles as $role)
+                                <option value="{{ $role->name }}" {{ (old('_method') !== 'PUT' && old('role') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <div x-data="{ showPassword: false }">
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
@@ -116,26 +140,37 @@
             </div>
         </template>
 
+        {{-- MODAL EDIT USER --}}
         <template x-teleport="body">
             <div x-show="isEditOpen" style="display: none; z-index: 999999;" class="fixed inset-0 flex items-center justify-center p-4 font-poppins" role="dialog">
-
                 <div x-show="isEditOpen" @click="isEditOpen = false" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
-
                 <div x-show="isEditOpen" x-transition class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
                     <h3 class="text-xl font-bold mb-6 text-slate-800">Edit Data Pengguna</h3>
 
-                    <form id="editForm" method="POST" class="space-y-4">
+                    {{-- FIX 3: Dynamic Action Url Binding dari data lama jika ada error --}}
+                    <form id="editForm" action="{{ old('_method') === 'PUT' && old('edit_user_id') ? route('users.update', old('edit_user_id')) : '' }}" method="POST" class="space-y-4">
                         @csrf
                         @method('PUT')
+                        <input type="hidden" name="edit_user_id" id="edit_user_id" value="{{ old('edit_user_id') }}">
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
-                            <input id="edit_name" name="name" type="text" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                            <input id="edit_name" name="name" type="text" value="{{ old('_method') === 'PUT' ? old('name') : '' }}" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email Login</label>
-                            <input id="edit_email" name="email" type="email" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                            <input id="edit_email" name="email" type="email" value="{{ old('_method') === 'PUT' ? old('email') : '' }}" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                        </div>
+
+                        {{-- FIX 2: Menambahkan Form Input Role yang terlewat --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
+                            <select id="edit_role" name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                                @foreach($roles as $role)
+                                <option value="{{ $role->name }}" {{ (old('_method') === 'PUT' && old('role') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div x-data="{ showNew: false }">
@@ -170,10 +205,15 @@
     </div>
 
     <script>
-        function openEditModal(id, name, email) {
+        function openEditModal(id, name, email, role) {
             document.getElementById('editForm').action = `/users/${id}`;
+            document.getElementById('edit_user_id').value = id;
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_email').value = email;
+
+            if (role) {
+                document.getElementById('edit_role').value = role;
+            }
 
             window.dispatchEvent(new Event('open-edit-modal'));
         }
