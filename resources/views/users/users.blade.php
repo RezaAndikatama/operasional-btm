@@ -67,7 +67,6 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-center gap-3">
-                                    {{-- OPTIMASI: Menggunakan PHP 8 Null-safe operator (?->name) agar tidak crash jika role kosong --}}
                                     <button type="button" onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->roles->first()?->name ?? '') }}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -112,7 +111,6 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
-                            {{-- FIX: Hapus id="edit_role" agar tidak bentrok dengan modal edit --}}
                             <select name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
                                 <option value="" disabled selected>-- Pilih Hak Akses --</option>
                                 @foreach($roles as $role)
@@ -170,12 +168,12 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
-                            <select id="edit_role" name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
-                                <option value="" disabled selected>-- Pilih Hak Akses --</option>
-                                @foreach($roles as $role)
-                                <option value="{{ $role->name }}" {{ (old('_method') === 'PUT' && old('role') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
-                                @endforeach
-                            </select>
+                            <div class="relative">
+                                <input id="edit_role_display" type="text" class="w-full rounded-lg border-slate-200 bg-slate-100 text-slate-500 text-sm cursor-not-allowed focus:ring-0" readonly>
+
+                                <input id="edit_role" name="role" type="hidden">
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1">Role/Hak akses tidak dapat diubah di sini.</p>
                         </div>
 
                         <div x-data="{ showNew: false }">
@@ -215,22 +213,14 @@
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_email').value = email;
 
-            // Logika baru untuk memilih Role secara fleksibel dan case-insensitive
-            let roleSelect = document.getElementById('edit_role');
-
             if (role) {
-                let roleFound = false;
-                for (let i = 0; i < roleSelect.options.length; i++) {
-                    if (roleSelect.options[i].value.trim().toLowerCase() === role.trim().toLowerCase()) {
-                        roleSelect.selectedIndex = i;
-                        roleFound = true;
-                        break;
-                    }
-                }
-                // Kembalikan ke default jika data role lama tidak sesuai/ditemukan
-                if (!roleFound) roleSelect.value = '';
+                // Huruf awalan dibuat Kapital untuk Tampilan (contoh: "Manajer")
+                document.getElementById('edit_role_display').value = role.charAt(0).toUpperCase() + role.slice(1);
+                // Value aslinya dikirim tersembunyi ke server
+                document.getElementById('edit_role').value = role;
             } else {
-                roleSelect.value = ''; // Jika belum punya role, kosongkan pilihan
+                document.getElementById('edit_role_display').value = 'Belum Ada';
+                document.getElementById('edit_role').value = '';
             }
 
             window.dispatchEvent(new Event('open-edit-modal'));
