@@ -67,7 +67,8 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex justify-center gap-3">
-                                    <button type="button" onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ $user->roles->first()->name ?? '' }}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg transition-colors">
+                                    {{-- OPTIMASI: Menggunakan PHP 8 Null-safe operator (?->name) agar tidak crash jika role kosong --}}
+                                    <button type="button" onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->roles->first()?->name ?? '') }}')" class="p-2 text-slate-400 hover:text-emerald-600 rounded-lg transition-colors">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
@@ -111,7 +112,9 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
+                            {{-- FIX: Hapus id="edit_role" agar tidak bentrok dengan modal edit --}}
                             <select name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                                <option value="" disabled selected>-- Pilih Hak Akses --</option>
                                 @foreach($roles as $role)
                                 <option value="{{ $role->name }}" {{ (old('_method') !== 'PUT' && old('role') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
                                 @endforeach
@@ -134,7 +137,10 @@
                             </div>
                         </div>
 
-                        <div class="pt-4 flex justify-end gap-3"><button type="button" @click="isModalOpen = false" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">Batal</button><button type="submit" class="bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors hover:bg-emerald-600">Simpan</button></div>
+                        <div class="pt-4 flex justify-end gap-3">
+                            <button type="button" @click="isModalOpen = false" class="px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">Batal</button>
+                            <button type="submit" class="bg-emerald-500 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors hover:bg-emerald-600">Simpan</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -147,7 +153,6 @@
                 <div x-show="isEditOpen" x-transition class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative">
                     <h3 class="text-xl font-bold mb-6 text-slate-800">Edit Data Pengguna</h3>
 
-                    {{-- FIX 3: Dynamic Action Url Binding dari data lama jika ada error --}}
                     <form id="editForm" action="{{ old('_method') === 'PUT' && old('edit_user_id') ? route('users.update', old('edit_user_id')) : '' }}" method="POST" class="space-y-4">
                         @csrf
                         @method('PUT')
@@ -163,10 +168,10 @@
                             <input id="edit_email" name="email" type="email" value="{{ old('_method') === 'PUT' ? old('email') : '' }}" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
                         </div>
 
-                        {{-- FIX 2: Menambahkan Form Input Role yang terlewat --}}
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Hak Akses</label>
                             <select id="edit_role" name="role" class="w-full rounded-lg border-slate-200 text-sm focus:ring-emerald-500" required>
+                                <option value="" disabled selected>-- Pilih Hak Akses --</option>
                                 @foreach($roles as $role)
                                 <option value="{{ $role->name }}" {{ (old('_method') === 'PUT' && old('role') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
                                 @endforeach
@@ -201,7 +206,6 @@
                 </div>
             </div>
         </template>
-
     </div>
 
     <script>
@@ -211,8 +215,22 @@
             document.getElementById('edit_name').value = name;
             document.getElementById('edit_email').value = email;
 
+            // Logika baru untuk memilih Role secara fleksibel dan case-insensitive
+            let roleSelect = document.getElementById('edit_role');
+
             if (role) {
-                document.getElementById('edit_role').value = role;
+                let roleFound = false;
+                for (let i = 0; i < roleSelect.options.length; i++) {
+                    if (roleSelect.options[i].value.trim().toLowerCase() === role.trim().toLowerCase()) {
+                        roleSelect.selectedIndex = i;
+                        roleFound = true;
+                        break;
+                    }
+                }
+                // Kembalikan ke default jika data role lama tidak sesuai/ditemukan
+                if (!roleFound) roleSelect.value = '';
+            } else {
+                roleSelect.value = ''; // Jika belum punya role, kosongkan pilihan
             }
 
             window.dispatchEvent(new Event('open-edit-modal'));
