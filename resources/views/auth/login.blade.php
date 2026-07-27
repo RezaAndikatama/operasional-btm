@@ -18,7 +18,6 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2 text-red-500 text-xs font-medium" />
         </div>
 
-        {{-- BAGIAN PASSWORD YANG DIPERBARUI --}}
         <div x-data="{ show: false }">
             <label for="password" class="block text-sm font-semibold text-slate-900 mb-2">Password</label>
             <div class="relative">
@@ -26,8 +25,7 @@
                     class="w-full px-4 py-3.5 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-colors placeholder:text-slate-400"
                     placeholder="Masukkan password anda" required autocomplete="new-password">
 
-                {{-- Tombol Mata --}}
-                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
+                <button type="button" @click="show = !show" class="absolute top-1/2 right-2 -translate-y-1/2 p-2 flex items-center justify-center text-slate-400 hover:text-slate-900 focus:outline-none transition-colors rounded-lg">
                     {{-- Ikon Mata Terbuka --}}
                     <svg x-show="!show" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
