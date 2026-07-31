@@ -98,7 +98,8 @@
                                                 </header>
 
                                                 <div class="p-6">
-                                                    <form action="{{ route('spareparts.update', $item->id) }}" method="POST" class="space-y-4">
+                                                    {{-- PERBAIKAN: Parameter ID menggunakan Fallback Null Coalescing --}}
+                                                    <form action="{{ route('spareparts.update', $item->sparepart_id ?? $item->id) }}" method="POST" class="space-y-4">
                                                         @csrf @method('PUT')
                                                         <div>
                                                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Item</label>
@@ -132,7 +133,8 @@
                                         </div>
                                     </div>
 
-                                    <form action="{{ route('spareparts.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus sparepart ini?');">
+                                    {{-- PERBAIKAN: Parameter ID menggunakan Fallback Null Coalescing --}}
+                                    <form action="{{ route('spareparts.destroy', $item->sparepart_id ?? $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus sparepart ini?');">
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
