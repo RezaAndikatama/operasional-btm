@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -43,15 +45,29 @@ class LoginRequest extends FormRequest
         // Memastikan user tidak melakukan spam percobaan login (Rate Limiting)
         $this->ensureIsNotRateLimited();
 
-        // Mengecek kecocokan kredensial (email & password) ke dalam database
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // 1. Cari user berdasarkan email yang diinputkan
+        $user = User::where('email', $this->email)->first();
+
+        // 2. Jika email TIDAK DITEMUKAN di database
+        if (! $user) {
             RateLimiter::hit($this->throttleKey());
 
-            // Jika gagal, catat percobaan tersebut dan kembalikan pesan error
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email yang Anda masukkan tidak terdaftar.',
             ]);
         }
+
+        // 3. Jika email ada, tapi PASSWORD SALAH
+        if (! Hash::check($this->password, $user->password)) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'password' => 'Password yang Anda masukkan salah.',
+            ]);
+        }
+
+        // 4. Jika email dan password BENAR, eksekusi login
+        Auth::login($user, $this->boolean('remember'));
 
         // Jika berhasil, bersihkan riwayat percobaan login yang gagal
         RateLimiter::clear($this->throttleKey());

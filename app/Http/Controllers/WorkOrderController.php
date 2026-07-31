@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WorkOrder;
 use App\Models\Customer;
 use App\Models\Sparepart;
-use App\Models\Technician; // <-- Tambahkan import Model Teknisi/Karyawan
+use App\Models\Technician;
 use Illuminate\Http\Request;
 
 class WorkOrderController extends Controller
@@ -47,7 +47,7 @@ class WorkOrderController extends Controller
         // Validasi Data
         $request->validate([
             'customer_name'    => 'required|string|max:255',
-            'technician_id'    => 'nullable|exists:technicians,id', // <-- Validasi Teknisi
+            'technician_id'    => 'nullable|exists:technicians,id',
             'job_name'         => 'required|string|max:255',
             'description'      => 'nullable|string',
             'status'           => 'required|string',
@@ -80,7 +80,7 @@ class WorkOrderController extends Controller
         WorkOrder::create([
             'wo_number'        => $woNumber,
             'customer_id'      => $customer->id,
-            'technician_id'    => $request->technician_id, // <-- Simpan ID Teknisi
+            'technician_id'    => $request->technician_id,
             'job_name'         => $request->job_name,
             'description'      => $request->description,
             'status'           => $request->status,
@@ -117,7 +117,7 @@ class WorkOrderController extends Controller
         // Update data
         $workOrder->update([
             'customer_id'      => $customer->id,
-            'technician_id'    => $request->technician_id, // <-- Update ID Teknisi
+            'technician_id'    => $request->technician_id,
             'job_name'         => $request->job_name,
             'description'      => $request->description,
             'status'           => $request->status,
