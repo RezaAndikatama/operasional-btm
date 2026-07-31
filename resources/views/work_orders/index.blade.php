@@ -130,7 +130,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex justify-center items-center gap-1.5" role="group" aria-label="Aksi Work Order">
 
-                                    <a href="{{ route('work_orders.invoice', $wo->id) }}" target="_blank"
+                                    <a href="{{ route('work_orders.invoice', $wo->work_order_id) }}" target="_blank"
                                         class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         aria-label="Cetak Invoice" title="Cetak Invoice">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -165,7 +165,7 @@
                                                 </header>
 
                                                 <div class="overflow-y-auto p-5 sm:p-8">
-                                                    <form id="editForm{{ $wo->id }}" action="{{ route('work_orders.update', $wo->id) }}" method="POST" class="space-y-8">
+                                                    <form id="editForm{{ $wo->work_order_id }}" action="{{ route('work_orders.update', $wo->work_order_id) }}" method="POST" class="space-y-8">
                                                         @csrf
                                                         @method('PUT')
 
@@ -237,7 +237,7 @@
                                                     <button type="button" @click="isEditOpen = false" class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">
                                                         Batal
                                                     </button>
-                                                    <button form="editForm{{ $wo->id }}" type="submit" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-100 text-center">
+                                                    <button form="editForm{{ $wo->work_order_id }}" type="submit" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-100 text-center">
                                                         Update Data
                                                     </button>
                                                 </footer>
@@ -245,7 +245,7 @@
                                         </div>
                                     </div>
 
-                                    <form action="{{ route('work_orders.destroy', $wo->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Work Order ini? Semua data relasi (termasuk penggunaan sparepart) akan ikut terhapus.');">
+                                    <form action="{{ route('work_orders.destroy', $wo->work_order_id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Work Order ini? Semua data relasi (termasuk penggunaan sparepart) akan ikut terhapus.');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

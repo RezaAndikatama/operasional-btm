@@ -98,8 +98,7 @@
                                                 </header>
 
                                                 <div class="p-6">
-                                                    {{-- PERBAIKAN 1: ->id diganti menjadi ->sparepart_id --}}
-                                                    <form action="{{ route('spareparts.update', $item->sparepart_id) }}" method="POST" class="space-y-4">
+                                                    <form action="{{ route('spareparts.update', $item->id) }}" method="POST" class="space-y-4">
                                                         @csrf @method('PUT')
                                                         <div>
                                                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Item</label>
@@ -133,8 +132,7 @@
                                         </div>
                                     </div>
 
-                                    {{-- PERBAIKAN 2: ->id diganti menjadi ->sparepart_id --}}
-                                    <form action="{{ route('spareparts.destroy', $item->sparepart_id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus sparepart ini?');">
+                                    <form action="{{ route('spareparts.destroy', $item->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin hapus sparepart ini?');">
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500"
@@ -213,8 +211,7 @@
                             <datalist id="wo_list">
                                 @foreach($workOrders as $wo)
                                 <option value="{{ $wo->wo_number }}">
-                                    {{-- PERBAIKAN 3: Menerapkan Null-safe operator untuk relasi customer --}}
-                                    {{ $wo->customer?->company_name ?? 'Pelanggan Umum' }}
+                                    {{ $wo->customer ? $wo->customer->company_name : 'Pelanggan Umum' }}
                                 </option>
                                 @endforeach
                             </datalist>
