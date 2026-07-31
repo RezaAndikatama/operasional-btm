@@ -62,7 +62,8 @@
                                         </svg>
                                     </button>
 
-                                    <form action="{{ route('technicians.destroy', $tech->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data teknisi ini?');">
+                                    {{-- PERBAIKAN 1: Parameter ID pada form destroy menggunakan Fallback --}}
+                                    <form action="{{ route('technicians.destroy', $tech->technician_id ?? $tech->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus data teknisi ini?');">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -211,7 +212,10 @@
 
     <script>
         function openEditModal(tech) {
-            document.getElementById('editForm').action = `{{ url('technicians') }}/${tech.id}`;
+            // PERBAIKAN 2: Mengambil technician_id, dan jika tidak ada kembali menggunakan id biasa (Fallback)
+            let techId = tech.technician_id || tech.id;
+
+            document.getElementById('editForm').action = `{{ url('technicians') }}/${techId}`;
             document.getElementById('edit_name').value = tech.name;
             document.getElementById('edit_tempat_tinggal').value = tech.tempat_tinggal;
             document.getElementById('edit_umur').value = tech.umur;

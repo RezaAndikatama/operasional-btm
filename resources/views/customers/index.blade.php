@@ -55,7 +55,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
                                     </button>
-                                    <form action="{{ route('customers.destroy', $customer->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data perusahaan {{ $customer->company_name }}?');">
+                                    <form action="{{ route('customers.destroy', $customer->customer_id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data perusahaan {{ $customer->company_name }}?');">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Data Pelanggan">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +129,7 @@
         function openEditModal(customer) {
             const form = document.getElementById('editForm');
 
-            form.action = `/customers/${customer.id}`;
+            form.action = `/customers/${customer.customer_id}`;
             document.getElementById('edit_company_name').value = customer.company_name;
             document.getElementById('edit_pic_name').value = customer.pic_name;
             document.getElementById('edit_phone').value = customer.phone;
