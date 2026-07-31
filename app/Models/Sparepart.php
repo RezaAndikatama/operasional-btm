@@ -9,6 +9,9 @@ class Sparepart extends Model
 {
     use HasFactory;
 
+    // TAMBAHKAN BARIS INI
+    protected $primaryKey = 'sparepart_id';
+
     // Kolom yang boleh diisi
     protected $fillable = [
         'name',

@@ -9,6 +9,9 @@ class InventoryHistory extends Model
 {
     use HasFactory;
 
+    // TAMBAHKAN BARIS INI
+    protected $primaryKey = 'history_id';
+
     protected $fillable = [
         'sparepart_id',
         'user_id',

@@ -9,6 +9,9 @@ class WorkOrder extends Model
 {
     use HasFactory;
 
+    // TAMBAHKAN BARIS INI
+    protected $primaryKey = 'work_order_id';
+
     // Izinkan kolom-kolom ini diisi melalui form (Mencegah error mass assignment)
     protected $fillable = [
         'wo_number',
