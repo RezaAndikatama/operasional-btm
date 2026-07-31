@@ -31,13 +31,13 @@ class WorkOrder extends Model
 
     public function technician()
     {
-        return $this->belongsTo(\App\Models\Technician::class, 'technician_id');
+        return $this->belongsTo(Technician::class, 'technician_id', 'technician_id');
     }
 
     // Hubungkan otomatis ke model Customer
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class, 'customer_id', 'customer_id');
     }
 
     // Relasi ke tabel sparepart
