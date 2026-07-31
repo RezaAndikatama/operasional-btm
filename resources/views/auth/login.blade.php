@@ -26,7 +26,7 @@
                     class="w-full px-4 py-3.5 pr-12 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-colors placeholder:text-slate-400"
                     placeholder="Masukkan password anda" required autocomplete="new-password">
 
-                {{-- Tombol Mata (Presisi seperti gambar) --}}
+                {{-- Tombol Mata --}}
                 <button type="button" @click="show = !show"
                     class="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-900 focus:outline-none transition-colors">
 
