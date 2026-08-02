@@ -26,7 +26,8 @@ class WorkOrder extends Model
     ];
 
     protected $casts = [
-        'estimasti_selesai' => 'date',
+        // PERBAIKAN 1: Memperbaiki typo (sebelumnya 'estimasti_selesai')
+        'estimasi_selesai' => 'date',
     ];
 
     public function technician()
@@ -43,7 +44,9 @@ class WorkOrder extends Model
     // Relasi ke tabel sparepart
     public function spareparts()
     {
-        return $this->belongsToMany(Sparepart::class, 'sparepart_work_order')
+        // PERBAIKAN 2: Menegaskan parameter foreign_key untuk pivot table
+        // belongsToMany(Model_Tujuan, 'nama_tabel_pivot', 'fk_tabel_ini_di_pivot', 'fk_tabel_tujuan_di_pivot')
+        return $this->belongsToMany(Sparepart::class, 'sparepart_work_order', 'work_order_id', 'sparepart_id')
             ->withPivot('quantity_used')
             ->withTimestamps();
     }
