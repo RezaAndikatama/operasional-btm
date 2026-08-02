@@ -62,19 +62,19 @@
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="text-xs font-bold text-emerald-600 mb-0.5">{{ $wo->wo_number }}</div>
-                                <div class="text-sm font-semibold text-slate-800">{{ $wo->customer->company_name }}</div>
-                                <div class="text-xs text-slate-500 mt-0.5">PIC: {{ $wo->customer->pic_name }}</div>
+                                <div class="text-sm font-semibold text-slate-800">{{ $wo->customer?->company_name ?? '-' }}</div>
+                                <div class="text-xs text-slate-500 mt-0.5">PIC: {{ $wo->customer?->pic_name ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 text-sm text-slate-600">
                                 <div class="font-medium text-slate-800">{{ $wo->job_name }}</div>
 
-                                {{-- PERBAIKAN: Menampilkan Nama Teknisi --}}
-                                @if($wo->technician)
+                                {{-- PERBAIKAN: Menampilkan Nama Teknisi dengan Cek ID --}}
+                                @if($wo->technician_id)
                                 <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-100 text-[11px] font-medium">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
-                                    {{ $wo->technician->name }}
+                                    {{ $wo->technician?->name ?? 'Memuat Teknisi...' }}
                                 </div>
                                 @else
                                 <div class="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 border border-slate-200 text-[11px] font-medium">
@@ -130,7 +130,8 @@
                             <td class="px-6 py-4">
                                 <div class="flex justify-center items-center gap-1.5" role="group" aria-label="Aksi Work Order">
 
-                                    <a href="{{ route('work_orders.invoice', $wo->work_order_id) }}" target="_blank"
+                                    {{-- Diberikan fallback operator ?? untuk keamanan ekstra --}}
+                                    <a href="{{ route('work_orders.invoice', $wo->work_order_id ?? $wo->id) }}" target="_blank"
                                         class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         aria-label="Cetak Invoice" title="Cetak Invoice">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -165,7 +166,7 @@
                                                 </header>
 
                                                 <div class="overflow-y-auto p-5 sm:p-8">
-                                                    <form id="editForm{{ $wo->work_order_id }}" action="{{ route('work_orders.update', $wo->work_order_id) }}" method="POST" class="space-y-8">
+                                                    <form id="editForm{{ $wo->work_order_id ?? $wo->id }}" action="{{ route('work_orders.update', $wo->work_order_id ?? $wo->id) }}" method="POST" class="space-y-8">
                                                         @csrf
                                                         @method('PUT')
 
@@ -174,7 +175,7 @@
                                                                 <legend class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-4">Data Utama Pekerjaan</legend>
                                                                 <div>
                                                                     <label class="block text-sm font-medium text-slate-700 mb-2">Nama Perusahaan / Pelanggan <span class="text-red-500">*</span></label>
-                                                                    <input type="text" name="customer_name" list="customer_list" value="{{ $wo->customer->company_name }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all autocomplete-off">
+                                                                    <input type="text" name="customer_name" list="customer_list" value="{{ $wo->customer?->company_name }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all autocomplete-off">
                                                                 </div>
                                                                 <div>
                                                                     <label class="block text-sm font-medium text-slate-700 mb-2">Judul Pekerjaan / Project <span class="text-red-500">*</span></label>
@@ -189,13 +190,13 @@
                                                             <fieldset class="w-full md:w-1/2 md:pl-8 space-y-5 sm:space-y-7 md:border-l border-slate-200">
                                                                 <legend class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-4">Administrasi & Biaya</legend>
 
-                                                                {{-- PERBAIKAN: Pilihan Teknisi --}}
                                                                 <div>
                                                                     <label class="block text-sm font-medium text-slate-700 mb-2">Teknisi Penanggung Jawab</label>
                                                                     <select name="technician_id" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
                                                                         <option value="">-- Pilih Teknisi (Opsional) --</option>
                                                                         @foreach($technicians as $tech)
-                                                                        <option value="{{ $tech->id }}" {{ $wo->technician_id == $tech->id ? 'selected' : '' }}>{{ $tech->name }}</option>
+                                                                        {{-- PERBAIKAN: Menggunakan fallback technician_id agar select option tidak error --}}
+                                                                        <option value="{{ $tech->technician_id ?? $tech->id }}" {{ $wo->technician_id == ($tech->technician_id ?? $tech->id) ? 'selected' : '' }}>{{ $tech->name }}</option>
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
@@ -237,7 +238,7 @@
                                                     <button type="button" @click="isEditOpen = false" class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">
                                                         Batal
                                                     </button>
-                                                    <button form="editForm{{ $wo->work_order_id }}" type="submit" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-100 text-center">
+                                                    <button form="editForm{{ $wo->work_order_id ?? $wo->id }}" type="submit" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-2.5 rounded-xl text-sm font-bold transition-all shadow-md shadow-emerald-100 text-center">
                                                         Update Data
                                                     </button>
                                                 </footer>
@@ -245,7 +246,7 @@
                                         </div>
                                     </div>
 
-                                    <form action="{{ route('work_orders.destroy', $wo->work_order_id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Work Order ini? Semua data relasi (termasuk penggunaan sparepart) akan ikut terhapus.');">
+                                    <form action="{{ route('work_orders.destroy', $wo->work_order_id ?? $wo->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Work Order ini? Semua data relasi (termasuk penggunaan sparepart) akan ikut terhapus.');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -343,13 +344,13 @@
                             <fieldset class="w-full md:w-1/2 md:pl-8 space-y-5 sm:space-y-7 md:border-l border-slate-200">
                                 <legend class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-4">Administrasi & Biaya</legend>
 
-                                {{-- PERBAIKAN: Pilihan Teknisi --}}
                                 <div>
                                     <label class="block text-sm font-medium text-slate-700 mb-2">Teknisi Penanggung Jawab</label>
                                     <select name="technician_id" class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-emerald-500 focus:border-emerald-500 bg-slate-50 outline-none transition-all">
                                         <option value="">-- Pilih Teknisi (Opsional) --</option>
                                         @foreach($technicians as $tech)
-                                        <option value="{{ $tech->id }}">{{ $tech->name }}</option>
+                                        {{-- PERBAIKAN: Menggunakan fallback technician_id agar data tersimpan --}}
+                                        <option value="{{ $tech->technician_id ?? $tech->id }}">{{ $tech->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
