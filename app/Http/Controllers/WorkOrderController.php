@@ -35,7 +35,6 @@ class WorkOrderController extends Controller
         $customers = Customer::orderBy('company_name', 'asc')->get();
 
         // 6. Mengambil data teknisi/karyawan untuk pilihan penugasan
-        // Sesuaikan 'name' dengan nama kolom di tabel technicians Anda (bisa 'nama', 'full_name', dll)
         $technicians = Technician::orderBy('name', 'asc')->get();
 
         // 7. Mengirimkan data ke file view index.blade.php
@@ -44,10 +43,10 @@ class WorkOrderController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi Data
+        // PERBAIKAN 1: Validasi tabel technicians disesuaikan ke kolom technician_id
         $request->validate([
             'customer_name'    => 'required|string|max:255',
-            'technician_id'    => 'nullable|exists:technicians,id',
+            'technician_id'    => 'nullable|exists:technicians,technician_id',
             'job_name'         => 'required|string|max:255',
             'description'      => 'nullable|string',
             'status'           => 'required|string',
@@ -79,7 +78,8 @@ class WorkOrderController extends Controller
         // Simpan Work Order lengkap dengan wo_number dan technician_id
         WorkOrder::create([
             'wo_number'        => $woNumber,
-            'customer_id'      => $customer->id,
+            // PERBAIKAN 2: Menggunakan ->customer_id dengan fallback
+            'customer_id'      => $customer->customer_id ?? $customer->id,
             'technician_id'    => $request->technician_id,
             'job_name'         => $request->job_name,
             'description'      => $request->description,
@@ -95,9 +95,10 @@ class WorkOrderController extends Controller
     // Update data
     public function update(Request $request, $id)
     {
+        // PERBAIKAN 3: Validasi tabel technicians disesuaikan ke kolom technician_id
         $request->validate([
             'customer_name'    => 'required|string|max:255',
-            'technician_id'    => 'nullable|exists:technicians,id', // <-- Validasi Teknisi
+            'technician_id'    => 'nullable|exists:technicians,technician_id',
             'job_name'         => 'required|string|max:255',
             'description'      => 'nullable|string',
             'status'           => 'required|string',
@@ -116,7 +117,8 @@ class WorkOrderController extends Controller
 
         // Update data
         $workOrder->update([
-            'customer_id'      => $customer->id,
+            // PERBAIKAN 4: Menggunakan ->customer_id dengan fallback
+            'customer_id'      => $customer->customer_id ?? $customer->id,
             'technician_id'    => $request->technician_id,
             'job_name'         => $request->job_name,
             'description'      => $request->description,
@@ -153,8 +155,9 @@ class WorkOrderController extends Controller
     // Menambahkan bahan baku
     public function addSparepart(Request $request, $id)
     {
+        // PERBAIKAN 5: Validasi tabel spareparts disesuaikan ke kolom sparepart_id
         $request->validate([
-            'sparepart_id' => 'required|exists:spareparts,id',
+            'sparepart_id' => 'required|exists:spareparts,sparepart_id',
             'quantity_used' => 'required|integer|min:1'
         ]);
 
