@@ -9,7 +9,6 @@ class InventoryHistory extends Model
 {
     use HasFactory;
 
-    // TAMBAHKAN BARIS INI
     protected $primaryKey = 'history_id';
 
     protected $fillable = [
@@ -23,11 +22,11 @@ class InventoryHistory extends Model
 
     public function sparepart()
     {
-        return $this->belongsTo(Sparepart::class);
+        return $this->belongsTo(Sparepart::class, 'sparepart_id', 'sparepart_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
